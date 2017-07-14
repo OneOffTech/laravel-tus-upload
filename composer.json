@@ -1,0 +1,42 @@
+{
+    "name": "avvertix/laravel-tus-upload",
+    "description": "Upload files to your Laravel application with the tus.io resumable upload protocol.",
+    "keywords": ["laravel", "package", "tus", "upload"],
+    "license": "MIT",
+    "type": "project",
+    "require": {
+        "php": ">=5.6.4",
+        "illuminate/auth": "5.4.*",
+        "illuminate/console": "5.4.*",
+        "illuminate/contracts": "5.4.*",
+        "illuminate/database": "5.4.*",
+        "illuminate/events": "5.4.*",
+        "illuminate/support": "5.4.*",
+        "illuminate/view": "5.4.*"
+    },
+    "require-dev": {
+        "fzaninotto/faker": "~1.4",
+        "mockery/mockery": "0.9.*",
+        "phpunit/phpunit": "~5.7",
+        "orchestra/testbench": "~3.4"
+    },
+    "autoload": {
+        "classmap": [
+            "database"
+        ],
+        "psr-4": {
+            "Avvertix\\TusUpload\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+    },
+    "config": {
+        "preferred-install": "dist",
+        "sort-packages": true
+    }
+}
