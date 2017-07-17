@@ -3,6 +3,31 @@ stages:
   - test
   - release
 
+
+## Making sure that the composer cache folder is the one we have in the CI cache
+before_script:
+  - export COMPOSER_CACHE_DIR=`pwd`/.composer-cache
+
+
+unit_tests:
+  cache:
+    key: "laravel-tus-upload"
+    paths:
+    - .composer-cache/
+  image: "docker.klink.asia/klinktools/php-image:7.0-alpine"
+  tags:
+    - docker
+  stage: test
+  script:
+    - composer install --no-dev --prefer-dist
+    - ./vendor/bin/phpunit
+  artifacts:
+    expire_in: 1 day
+    paths:
+    - vendor/
+    - public/js/nls/
+
+
 push_to_composer_repo:
   stage: release
   script:
@@ -13,3 +38,6 @@ push_to_composer_repo:
     - php ./bin/satis build --verbose ./satis.json ./web
   tags: 
   - shell
+  only:
+  - master
+  - tags
