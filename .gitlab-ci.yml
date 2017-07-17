@@ -19,13 +19,8 @@ unit_tests:
     - docker
   stage: test
   script:
-    - composer install --no-dev --prefer-dist
+    - composer install --prefer-dist
     - ./vendor/bin/phpunit
-  artifacts:
-    expire_in: 1 day
-    paths:
-    - vendor/
-    - public/js/nls/
 
 
 push_to_composer_repo:
