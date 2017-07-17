@@ -41,6 +41,7 @@ class TusUpload extends Model
         'metadata' => 'json',
         'cancelled' => 'bool',
         'completed' => 'bool',
+        'metadata' => 'json',
     ];
 
     /**

@@ -22,7 +22,7 @@ class CreateTusUploadsQueueTable extends Migration
             $table->string('tus_id')->unique()->nullable(); // the identifier that Tus associate with the upload
             $table->string('filename');
             $table->string('mimetype')->nullable();
-            $table->json('metadata')->nullable(); //can be used for application specific metadata
+            $table->text('metadata')->nullable(); //can be used for application specific metadata
             $table->unsignedBigInteger('size'); // The upload's total size in bytes.
             $table->unsignedBigInteger('offset')->default(0); // The upload's current offset in bytes.
             $table->boolean('cancelled')->default(false); // the upload has been cancelled by the user
