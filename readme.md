@@ -25,9 +25,29 @@ change in the future).
 
 To get started, install Laravel Tus Upload via the Composer package manager:
 
+**Currently the package is on a private repository, therefore you need to add a repository entry in your `composer.json` file**
+
+```json
+"repositories": [
+    {
+        "type": "composer",
+        "url": "https://build.klink.asia/composer/"
+    }
+]
 ```
-# This will be the intended installation path, currently the package is not public
-composer require alessio.vertemati/laravel-tus-upload
+
+Then you can require it in your composer.json file
+
+```json
+"require": {
+    "php": ">=5.6.4",
+
+    "avvertix/laravel-tus-upload": "dev-master"
+},
+```
+
+```
+composer update avvertix/laravel-tus-upload
 ```
 
 Next, register the TusUpload service provider in the providers array of your `config/app.php` configuration file:
