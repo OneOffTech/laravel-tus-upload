@@ -1,0 +1,15 @@
+stages:
+  - build
+  - test
+  - release
+
+push_to_composer_repo:
+  stage: release
+  script:
+    - HOME=${SATIS_FOLDER}/comp_home
+    - COMPOSER_HOME=${SATIS_FOLDER}/comp_home/.composer
+    - GIT_SSL_NO_VERIFY=true
+    - cd $SATIS_FOLDER
+    - php ./bin/satis build --verbose ./satis.json ./web
+  tags: 
+  - shell
