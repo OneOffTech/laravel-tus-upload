@@ -14,7 +14,7 @@ unit_tests:
     key: "laravel-tus-upload"
     paths:
     - .composer-cache/
-  image: "docker.klink.asia/klinktools/php-image:7.0-alpine"
+  image: "docker.klink.asia/open/docker-php:7.0-alpine"
   tags:
     - docker
   stage: test
