@@ -33,7 +33,7 @@ class TusUploadTest extends AbstractTestCase
         ]);
 
 
-        $this->assertEquals(config('tusupload.storage').'/'.$tusId, $upload->path());
+        $this->assertEquals(config('tusupload.storage').'/'.$tusId . '.bin', $upload->path());
 
     }
     
