@@ -2,4 +2,4 @@
 
 # pwd is packages/uploaddy/hooks/linux
 payload=$(cat /dev/stdin)
-php ../../../../artisan tus:hook -vvv post-terminate "${payload}"
+php ../../../../../artisan tus:hook -vvv post-terminate "${payload}"

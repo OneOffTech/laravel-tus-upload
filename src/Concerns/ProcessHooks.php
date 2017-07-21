@@ -4,76 +4,53 @@ namespace Avvertix\TusUpload\Concerns;
 
 use Illuminate\Container\Container;
 use Avvertix\TusUpload\TusUpload;
+use Avvertix\TusUpload\Console\TusHookInput;
 use Log;
+use Exception;
 
 trait ProcessHooks
 {
     /**
-     * Check for the existence of the user and filename property in the metadata
+     * Validates the hook payload
      *
-     * todo: more checks
+     * Currently checks for the request id, the filename and the token fields
+     *
+     * @return bool
      */
     private function isPayloadValid($payload){
 
         return $payload->has('MetaData.filename')
-               && $payload->has('MetaData.api_token')
+               && $payload->has('MetaData.token')
                && !empty($payload->id());
     }
 
-
-    private function preCreate($payload)
+    /**
+     * Process the pre-create hook
+     */
+    private function preCreate(TusHookInput $payload)
     {
         $requestId = $payload->id();
-        $token = $payload->input('MetaData.api_token');
-     
-        $credentials = ['api_token' => $token];
-
-        if (!$this->auth->validate($credentials, $payload->MetaData)) {
-            // user authentication not valid or the user don't have permission to upload files
-            return false; // maybe throw exceptions and then handle them properly
-        }
+        $token = $payload->input('MetaData.token');
         
-        $userId = $this->auth->user()->id;
-        
-        $upload = $this->uploads->findByUploadRequest($userId, $requestId);
+        $upload = $this->uploads->findByUploadRequestAndToken($requestId, $token);
 
         if(is_null($upload)){
-            Log::info("Upload {$userId}-{$requestId} not existing, creating the entry.");
-            $this->uploads->create(
-                $userId, 
-                $requestId, 
-                $payload->input('MetaData.filename'), 
-                $payload->Size, 
-                null, // $payload->MetaData->mimetype, 
-                $payload->Offset, 
-                $payload->MetaData);
-        }
-        else {
-
-            // an Upload with the same requestID and userId is in progress
-            // better to say no and generate a new requestID, probable collision
-
-            return false;
+            Log::info("Upload identified by {$requestId}-{$token} not existing.");
+            throw new Exception('Upload not found, continuation not granted');
         }
 
         return true; 
     }
 
-    private function postReceive($payload)
+    /**
+     * Process the post-receive hook
+     */
+    private function postReceive(TusHookInput $payload)
     {
         $requestId = $payload->id();
-        $token = $payload->input('MetaData.api_token');
-     
-        $credentials = ['api_token' => $token];
-
-        if (!$this->auth->validate($credentials, $payload->MetaData)) {
-            // user authentication not valid or the user don't have permission to upload files
-            return false; // maybe throw exceptions and then handle them properly
-        }
+        $token = $payload->input('MetaData.token');
         
-        $userId = $this->auth->user()->id;
-        
-        $upload = $this->uploads->findByUploadRequest($userId, $requestId);
+        $upload = $this->uploads->findByUploadRequestAndToken($requestId, $token);
 
         // let's update the status of the upload
         $this->uploads->update($upload, $payload->tusId(), $payload->input('Offset'));
@@ -81,24 +58,18 @@ trait ProcessHooks
         return true;
     }
 
-    private function postFinish($payload)
+    /**
+     * Process the post-finish hook
+     */
+    private function postFinish(TusHookInput $payload)
     {
         $requestId = $payload->id();
-        $token = $payload->input('MetaData.api_token');
-     
-        $credentials = ['api_token' => $token];
-
-        if (!$this->auth->validate($credentials, $payload->MetaData)) {
-            // user authentication not valid or the user don't have permission to upload files
-            return false; // maybe throw exceptions and then handle them properly
-        }
+        $token = $payload->input('MetaData.token');
         
-        $userId = $this->auth->user()->id;
-        
-        $upload = $this->uploads->findByUploadRequest($userId, $requestId);
+        $upload = $this->uploads->findByUploadRequestAndToken($requestId, $token);
 
         if(is_null($upload)){
-            Log::error("Upload {$userId}-{$requestId} not found.");
+            Log::error("Upload {$requestId}-{$token} not found.");
             return false;
         }
 
@@ -107,24 +78,18 @@ trait ProcessHooks
         return true;
     }
 
-    private function postTerminate($payload)
+    /**
+     * Process the post-terminate hook
+     */
+    private function postTerminate(TusHookInput $payload)
     {
         $requestId = $payload->id();
-        $token = $payload->input('MetaData.api_token');
-     
-        $credentials = ['api_token' => $token];
-
-        if (!$this->auth->validate($credentials, $payload->MetaData)) {
-            // user authentication not valid or the user don't have permission to upload files
-            return false; // maybe throw exceptions and then handle them properly
-        }
+        $token = $payload->input('MetaData.token');
         
-        $userId = $this->auth->user()->id;
-        
-        $upload = $this->uploads->findByUploadRequest($userId, $requestId);
+        $upload = $this->uploads->findByUploadRequestAndToken($requestId, $token);
 
         if(is_null($upload)){
-            Log::error("Upload {$userId}-{$requestId} not found.");
+            Log::error("Upload {$requestId}-{$token} not found.");
             return false;
         }
 

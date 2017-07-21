@@ -8,6 +8,7 @@ use Avvertix\TusUpload\Events\TusUploadProgress;
 use Avvertix\TusUpload\Events\TusUploadCompleted;
 use Avvertix\TusUpload\Events\TusUploadCancelled;
 use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon;
 
 class TusUploadRepository
 {
@@ -46,6 +47,18 @@ class TusUploadRepository
     }
 
     /**
+     * Get an upload given the request ID and the upload token.
+     *
+     * @param  string  $requestId
+     * @param  string  $uploadToken
+     * @return \Avvertix\TusUpload\TusUpload|null
+     */
+    public function findByUploadRequestAndToken($requestId, $uploadToken)
+    {
+        return TusUpload::where('upload_token', $uploadToken)->where('request_id', $requestId)->first();
+    }
+
+    /**
      * Get the upload instances for the given user ID.
      *
      * @param  mixed  $userId
@@ -73,18 +86,20 @@ class TusUploadRepository
      * @param  object|array  $metadata
      * @return \Avvertix\TusUpload\TusUpload
      */
-    public function create($userId, $requestId, $filename, $size, $mimeType = null, $offset = 0, $metadata = null)
+    public function create($user, $requestId, $filename, $size, $mimeType = null, $offset = 0, $metadata = null)
     {
         // todo: add some validation
 
         $upload = (new TusUpload)->forceFill([
-            'user_id' => $userId,
+            'user_id' => $user instanceof Model ? $user->getKey() : $user,
             'request_id' => $requestId,
             'filename' => $filename,
             'size' => $size,
             'offset' => $offset,
             'mimetype' => $mimeType,
             'metadata' => $metadata,
+            'upload_token' => str_random(60 - strlen($requestId)) . $requestId,
+            'upload_token_expires_at' => Carbon::now()->addHour(),
         ]);
 
         $upload->save();

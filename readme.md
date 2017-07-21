@@ -10,7 +10,7 @@ into consideration to use the [Windows Subsystem for Linux](https://msdn.microso
 * [x] Resumable upload mechanism (with self distributed tusd binary)
 * [x] Upload queue (mostly)
 * [ ] Upload page template
-* [ ] Javascript Upload component (basic)
+* [x] Javascript Upload component (basic)
 
 ## How it works
 
@@ -25,18 +25,18 @@ change in the future).
 
 To get started, install Laravel Tus Upload via the Composer package manager:
 
-**Currently the package is on a private repository, therefore you need to add a repository entry in your `composer.json` file**
+**Currently the package is not on the public Composer repository, therefore you need to add a repository entry in your `composer.json` file**
 
 ```json
 "repositories": [
     {
-        "type": "composer",
-        "url": "https://build.klink.asia/composer/"
+        "type": "vcs",
+        "url": "https://git.klink.asia/alessio.vertemati/laravel-tus-upload"
     }
 ]
 ```
 
-Then you can require it in your composer.json file
+Then you can require it
 
 ```json
 "require": {
@@ -56,6 +56,8 @@ Next, register the TusUpload service provider in the providers array of your `co
 Avvertix\TusUpload\Providers\TusUploadServiceProvider::class,
 ```
 
+**Database migrations**
+
 The TusUpload service provider registers its own database migration directory with the framework, so 
 you should migrate your database after registering the provider. 
 
@@ -65,10 +67,57 @@ The TusUpload migrations will create the tables your application needs to store 
 php artisan migrate
 ```
 
+**Trait you can add to your User model**
+
 In your `User` model you can, now, add the `HasUploads` trait in order to grab the current upload 
 queue for a specific user.
 
-### Configuration
+**Authorizing an upload**
+
+To overcome/prevent an un-authorized file upload the [upload creation endpoint](#api) is protected with the 
+`web` guard and a gate. You see the [overall request flow](#upload-flow) for a better view on how the 
+process works.
+
+The Gate, named `upload-via-tus`, will let you verify deeply the upload action against the user that 
+is performing it.
+
+Currently you must define the [gate](https://laravel.com/docs/5.4/authorization#writing-gates) implementation.
+You do it in the `boot` method in the `AuthServiceProvider` class, like the next code block
+
+```php
+/**
+ * Register any authentication / authorization services.
+ *
+ * @return void
+ */
+public function boot()
+{
+    $this->registerPolicies();
+
+    Gate::define('upload-via-tus', function ($user, $upload_request) {
+        // $upload_request instanceof \Avvertix\TusUpload\Http\Requests\CreateUploadRequest
+        // ...
+    });
+}
+```
+
+The callback will receive the `$user` that wants to do the upload and the `CreateUploadRequest`. The request might
+contain custom metadata, according to the caller. Required inputs are the request `id`, the `filename`, while `filesize` 
+might be set, even if null. The `filesize` can be null if the browser don't support the size property on the File object.
+
+**Javascript and the frontend**
+
+The package don't provide fancy Javascript based interactions, but only a library to perform the uploads.
+
+The library is available in `public/js/tusuploader.js` and currently require [axios](https://github.com/mzabriskie/axios)
+to be available as a global object. Axios is used to make Ajax requests. 
+
+For an example on how to properly include axios you might want to take a look at the default 
+[`bootstrap.js`](https://github.com/laravel/laravel/blob/v5.4.23/resources/assets/js/bootstrap.js#L22-L38)
+file available in Laravel after a clean install.
+
+
+### Advanced Configuration
 
 Out of the box the package has some base defaults, like the location of the 
 tusd executable, the upload folder and so on.
@@ -83,60 +132,13 @@ If you don't need to configure all options, the configuration via environment va
 also supported, here are the ones you might want to change.
 
 - `TUSUPLOAD_USE_PROXY`: (boolean) If the tusd server will run behind a proxy
+- `TUSUPLOAD_URL`: (string) The URL of the tus server endpoint if running behind a proxy
 - `TUSUPLOAD_HOST`: (string) The host on which the tusd server will listen for incoming connections
 - `TUSUPLOAD_PORT`: (string) The port on which the tusd server will listen for incoming connections
 - `TUSUPLOAD_HTTP_PATH`: (string) The path on the (host and port), where tusd will accept connections
 - `TUSUPLOAD_STORAGE_PATH`: (string) Where the files are stored during and after the upload procedure
 - `TUSUPLOAD_STORAGE_MAXIMUM_SIZE`: (number of bytes) The maximum amount of space to use for storing 
    the uploads.
-
-### Authenticating an Upload Request
-
-The connection between tusd and Laravel happens via command line hooks, therefore usual authentication 
-methods via HTTP request cannot be used.
-
-To overcome/prevent an un-authorized file upload we require to have in place an `api` guard 
-with a driver that supports authentication with an `api_token` field, like the `token` driver.
-
-The `api` guard will be used also for authenticating requests to the offered API for checking and 
-listing the uploads of a user.
-
-If you don't have already a `token` based API, add the `api_token` field to the user table.
-
-```php
-// migration to add the api_token field to the users table
-$table->string('api_token', 60)->unique();
-```
-
-Make sure, also, that in the `auth.php` configuration file the `api.driver` configuration is set to `token`.
-
-```php
-'guards' => [
-    // ...
-
-    'api' => [
-        'driver' => 'token',
-        'provider' => 'users',
-    ],
-],
-```
-
-The javascript client will send the API token together with the upload request, so it can be verified 
-before letting the upload begin. In this way we confirm that the user exists on the system.
-
-Furthermore, depending on your application logic, we use a Gate named `tusupload-can-upload`, if defined, 
-will let you verify deeply the upload action against the user that is performing it.
-
-You can define it with:
-
-```php
-Gate::define('tusupload-can-upload', function ($user, array $upload_metadata) {
-    // ...
-});
-```
-
-The callback will receive the `$user` that wants to do the upload and the metadata of the file to be uploaded, 
-in an associative array form.
 
 ### Starting the Tus server
 
@@ -151,11 +153,56 @@ php artisan tus:start
 
 This command will keep listening until killed.
 
+
+### Running behind a proxy
+
+If you are going to proxy requests to tusd, please refer to [Can I run tusd behind a reverse proxy?](https://github.com/tus/tusd#can-i-run-tusd-behind-a-reverse-proxy) for the proxy configuration.
+
+In addition please specify the following configuration attributes in your `.env` file:
+
+```
+TUSUPLOAD_USE_PROXY=true
+TUSUPLOAD_URL=http://example.dev/tus
+```
+
+where `http://example.dev/tus` is the absolute URL that the will be proxied to the tusd deamon.
+
+## Upload flow
+
+See [docs/flow.md](./docs/flow.md).
+
+## Database structure
+
+See [docs/database.md](./docs/database.md).
+
 ## Javascript library
 
 *to be documented*
 
+```html
+<script src="./public/js/tusuploader.js"></script>
+```
+
+```js
+var Uploader = new window.TusUploader({autoUpload: true});
+
+var input = document.getElementById('file');
+
+input.addEventListener("change", function(e) {
+    // Get the selected file from the input element
+    var file = e.target.files[0]
+
+    // add it to the uploader queue
+    var addedUpload = Uploader.upload(file);
+});
+
+```
+
 ## API
+
+*to be documented*
+
+## Events
 
 *to be documented*
 

@@ -50,7 +50,9 @@ class TusUploadRepositoryTest extends AbstractTestCase
             'user_id' => 1,
             'request_id' => str_random(60),
             'filename' => 'test.pdf',
-            'size' => 100
+            'size' => 100,
+            'upload_token' => str_random(60),
+            'upload_token_expires_at' => \Carbon\Carbon::now()->addHour()
         ]);
 
         $upload->save();
@@ -79,7 +81,9 @@ class TusUploadRepositoryTest extends AbstractTestCase
             'request_id' => str_random(60),
             'filename' => 'test.pdf',
             'size' => 100,
-            'completed' => true
+            'completed' => true,
+            'upload_token' => str_random(60),
+            'upload_token_expires_at' => \Carbon\Carbon::now()->addHour()
         ]);
 
         $upload->save();
@@ -101,7 +105,9 @@ class TusUploadRepositoryTest extends AbstractTestCase
             'request_id' => str_random(60),
             'filename' => 'test.pdf',
             'size' => 100,
-            'cancelled' => true
+            'cancelled' => true,
+            'upload_token' => str_random(60),
+            'upload_token_expires_at' => \Carbon\Carbon::now()->addHour()
         ]);
 
         $upload->save();
@@ -125,6 +131,8 @@ class TusUploadRepositoryTest extends AbstractTestCase
             'size' => 100,
             'cancelled' => false,
             'completed' => false,
+            'upload_token' => str_random(60),
+            'upload_token_expires_at' => \Carbon\Carbon::now()->addHour()
         ]);
 
         $upload->save();
@@ -161,6 +169,8 @@ class TusUploadRepositoryTest extends AbstractTestCase
             'size' => 100,
             'cancelled' => false,
             'completed' => false,
+            'upload_token' => str_random(60),
+            'upload_token_expires_at' => \Carbon\Carbon::now()->addHour()
         ]);
 
         $upload->save();

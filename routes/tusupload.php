@@ -12,6 +12,9 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->resource('/uploadjobs', \Avvertix\TusUpload\Http\Controllers\TusUploadQueueController::class, ['only' => [
-    'index', 'destroy'
-]]);
+Route::middleware('web')
+       ->resource('/uploadjobs', \Avvertix\TusUpload\Http\Controllers\TusUploadQueueController::class, [
+            'only' => [
+                'index', 'store', 'destroy'
+            ]
+]);

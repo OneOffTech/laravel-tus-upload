@@ -33,7 +33,19 @@ return [
     |
     */
 
-    'behind_proxy' => env('TUSUPLOAD_USE_PROXY') ?: true,
+    'behind_proxy' => env('TUSUPLOAD_USE_PROXY') ?: false,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Tus public URL
+    |--------------------------------------------------------------------------
+    |
+    | The URL on which tus is exposed by the proxy.
+    | Used only if behind_proxy is set to true.
+    |
+    */
+
+    'public_url' => env('TUSUPLOAD_URL') ?: null,
 
     /*
     |--------------------------------------------------------------------------
@@ -66,7 +78,7 @@ return [
     |
     */
 
-    'base_path' => env('TUSUPLOAD_HTTP_PATH', 'uploads'),
+    'base_path' => env('TUSUPLOAD_HTTP_PATH', "/uploads/"),
 
     /*
     |--------------------------------------------------------------------------
