@@ -4,17 +4,19 @@
  * It gives you the ability to upload a file to the reference tus server
  */
 
-var tus = require("tus-js-client");
-var Hogan = require('hogan.js');
+// Global axios
+
+var tus = require("../../node_modules/tus-js-client/dist/tus");
 var EventEmitter = require('eventemitter-light');
 var cuid = require('cuid');
-var lodash = require('lodash');
-
+var assignIn = require('lodash.assignIn');
 
 /**
+ * Creates a new Tus based file Uploader
  * 
+ * @param {object} options
  */
-module.exports = function(selector, options){
+module.exports = function(options){
 
     var UploadStatus = {
         PENDING: 1,
@@ -26,18 +28,34 @@ module.exports = function(selector, options){
     }
 
     var defaultOptions = {
-        endpoint: "http://192.168.0.36:1080/uploads/",
-        api_token: null,
+        /**
+         * The TUSd server endpoint
+         * 
+         * @var {string}
+         */
+        // tus_endpoint: "http://192.168.0.36:1080/uploads/", // might be in the response from the server
+        /**
+         * The endpoint that will authorize the upload request
+         * @var {string}
+         */
+        endpoint: "/uploadjobs/",
+        /**
+         * 
+         * @var {array}
+         */
         retryDelays: [0, 1000, 3000, 5000],
         /**
          * Automatically starts the upload after has been added to the queue
+         * 
+         * @default false
+         * @var {boolean}
          */
         autoUpload: false,
     };
 
     var uploadsQueue = [];
 
-    options = lodash.assignIn(defaultOptions, options || {});
+    options = assignIn(defaultOptions, options || {});
 
     if (typeof document.querySelector === undefined) {
         throw new Error("TusUpload: Browser not supported.");
@@ -45,10 +63,6 @@ module.exports = function(selector, options){
 
     if (!options.endpoint) {
         throw new Error("TusUpload: Url not specified.");
-    }
-
-    if (!options.api_token) {
-        throw new Error("TusUpload: API Token/Secret not specified.");
     }
 
     if(!tus.isSupported) {
@@ -59,7 +73,7 @@ module.exports = function(selector, options){
 
 
     function handleUploadError(error){
-        console.log('UploadError', this, "Failed because: " + error);
+        console.log('UploadError', this, "Failed because:", error);
     }
 
     
@@ -85,21 +99,23 @@ module.exports = function(selector, options){
 
         this.id = cuid();
 
+        this.metadata = assignIn({
+            filename: file.name,
+            upload_request_id: this.id
+        }, metadata || {});
+
         // Create a new tus upload
         this.transport = new tus.Upload(file, {
-            endpoint: options.endpoint,
+            endpoint: options.tus_endpoint,
             retryDelays: options.retryDelays,
-            metadata: lodash.assignIn({
-                filename: file.name,
-                api_token: options.api_token,
-                upload_request_id: this.id
-            }, metadata || {}),
+            metadata: this.metadata,
             onError: handleUploadError.bind(this),
             onProgress: handleUploadProgress.bind(this),
             onSuccess:  handleUploadSuccess.bind(this)
         });
 
         this.status = UploadStatus.PENDING;
+        this.uploadToken = null;
 
         this.file = file;
 
@@ -108,6 +124,7 @@ module.exports = function(selector, options){
 
 
     /**
+     * Stop the upload
      * 
      * @return {Upload}
      */
@@ -118,13 +135,31 @@ module.exports = function(selector, options){
     }
 
     /**
+     * Starts the upload
      * 
      * @return {Upload}
      */
     Upload.prototype.start = function(){
+
+        window.axios.post(options.endpoint, assignIn({
+            id: this.id,
+            filename: this.metadata.filename,
+            filesize: this.file.size || '',
+            filetype: this.file.type || '',
+        }, this.metadata )).then(function(response){
+
+            this.uploadToken = response.data.upload_token;
+            this.transport.options.metadata.token = this.uploadToken;
+            this.transport.options.endpoint = response.data.location;
+
+            // set the upload token in the metadata of the transport
+            this.status = UploadStatus.UPLOADING;
+            this.transport.start();
+
+        }.bind(this)).catch(function (error) {
+            console.log(error);
+        }.bind(this));
         
-        this.transport.start();
-        this.status = UploadStatus.UPLOADING;
 
         return this;
     }
@@ -132,14 +167,16 @@ module.exports = function(selector, options){
     var TusUploadInner = {};
 
     /**
+     * Upload a file
      * 
-     * @param File file https://developer.mozilla.org/en-US/docs/Web/API/File
+     * @param {File} file https://developer.mozilla.org/en-US/docs/Web/API/File
+     * @param {Object} metadata Application level metatada about the file that should be sent to the server
+     * @return {Upload} the upload entry added to the queue
      */
     TusUploadInner.upload = function(file, metadata){
 
         // Create a new upload
         var upload = new Upload(file, metadata);
-
         
         // add it to the queue
         uploadsQueue.push(upload);
@@ -149,11 +186,10 @@ module.exports = function(selector, options){
             upload.start();
         }
 
-        // console.log(upload);
-
         return upload;
     }
 
+    TusUploadInner.Status = UploadStatus;
 
     return TusUploadInner;
 }

@@ -5,7 +5,7 @@ namespace Avvertix\TusUpload\Console\Commands;
 use Illuminate\Console\Command;
 use Avvertix\TusUpload\TusUploadRepository;
 use Avvertix\TusUpload\Concerns\ProcessHooks;
-use Avvertix\TusUpload\TusHookRequest;
+use Avvertix\TusUpload\Console\TusHookInput;
 use Avvertix\TusUpload\Contracts\AuthenticationResolver;
 use Log;
 use Exception;
@@ -36,22 +36,15 @@ class TusHookProcessingCommand extends Command
     private $uploads = null;
 
     /**
-     * the AuthenticationResolver implementation that will verify if the user can do the upload
-     * @var \Avvertix\TusUpload\Contracts\AuthenticationResolver
-     */
-    private $auth = null;
-
-    /**
      * Create a new command instance.
      *
      * @return void
      */
-    public function __construct(TusUploadRepository $uploads, AuthenticationResolver $auth )
+    public function __construct(TusUploadRepository $uploads)
     {
         parent::__construct();
 
         $this->uploads = $uploads;
-        $this->auth = $auth;
     }
 
     /**
@@ -65,7 +58,7 @@ class TusHookProcessingCommand extends Command
 
         $payloadString = $this->argument('payload');
 
-        $payload = TusHookRequest::create($payloadString);
+        $payload = TusHookInput::create($payloadString);
 
         Log::info("Processing $hook...", ['payload' => $payload]);
 

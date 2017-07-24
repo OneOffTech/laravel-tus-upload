@@ -1,23 +1,26 @@
 {
   "private": true,
+  "main": "public/js/tusuploader.js",
+  "browser": "public/js/tusuploader.js",
   "scripts": {
     "dev": "npm run development",
-    "development": "cross-env NODE_ENV=development node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
-    "watch": "cross-env NODE_ENV=development node_modules/webpack/bin/webpack.js --watch --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
-    "watch-poll": "npm run watch -- --watch-poll",
-    "hot": "cross-env NODE_ENV=development node_modules/webpack-dev-server/bin/webpack-dev-server.js --inline --hot --config=node_modules/laravel-mix/setup/webpack.config.js",
+    "development": "node_modules/.bin/rollup --config",
+    "watch": "node_modules/.bin/rollup --config --watch",
     "prod": "npm run production",
-    "production": "cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js"
+    "production": "node_modules/.bin/rollup --config"
   },
   "devDependencies": {
     "cross-env": "^3.2.3",
-    "laravel-mix": "0.*",
-    "lodash": "^4.17.4",
-    "cuid": "~1.3.8",
-    "eventemitter-light": "^0.2.2",
-    "hogan.js": "^3.0.2",
-    "tus-js-client": "^1.4.3"
+    "rollup": "^0.43.0",
+    "rollup-plugin-commonjs": "^8.0.2",
+    "rollup-plugin-filesize": "^1.4.2",
+    "rollup-plugin-node-resolve": "^3.0.0",
+    "rollup-watch": "^4.0.0"
   },
   "dependencies": {
+    "cuid": "~1.3.8",
+    "eventemitter-light": "^0.2.2",
+    "tus-js-client": "^1.4.3",
+    "lodash.assignin": "^4.2.0"
   }
 }

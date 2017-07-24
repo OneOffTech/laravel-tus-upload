@@ -8,6 +8,7 @@ use Avvertix\TusUpload\Events\TusUploadProgress;
 use Avvertix\TusUpload\Events\TusUploadCompleted;
 use Avvertix\TusUpload\Events\TusUploadCancelled;
 use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon;
 
 class TusUploadRepository
 {
@@ -46,6 +47,18 @@ class TusUploadRepository
     }
 
     /**
+     * Get an upload given the request ID and the upload token.
+     *
+     * @param  string  $requestId
+     * @param  string  $uploadToken
+     * @return \Avvertix\TusUpload\TusUpload|null
+     */
+    public function findByUploadRequestAndToken($requestId, $uploadToken)
+    {
+        return TusUpload::where('upload_token', $uploadToken)->where('request_id', $requestId)->first();
+    }
+
+    /**
      * Get the upload instances for the given user ID.
      *
      * @param  mixed  $userId
@@ -73,18 +86,20 @@ class TusUploadRepository
      * @param  object|array  $metadata
      * @return \Avvertix\TusUpload\TusUpload
      */
-    public function create($userId, $requestId, $filename, $size, $mimeType = null, $offset = 0, $metadata = null)
+    public function create($user, $requestId, $filename, $size, $mimeType = null, $offset = 0, $metadata = null)
     {
         // todo: add some validation
 
         $upload = (new TusUpload)->forceFill([
-            'user_id' => $userId,
+            'user_id' => $user instanceof Model ? $user->getKey() : $user,
             'request_id' => $requestId,
             'filename' => $filename,
             'size' => $size,
             'offset' => $offset,
             'mimetype' => $mimeType,
             'metadata' => $metadata,
+            'upload_token' => str_random(60 - strlen($requestId)) . $requestId,
+            'upload_token_expires_at' => Carbon::now()->addHour(),
         ]);
 
         $upload->save();
@@ -95,16 +110,39 @@ class TusUploadRepository
     }
 
     /**
-     * Update the given upload.
+     * Update the given upload upload progress.
      *
      * The update is performed only if the upload is not completed or cancelled
      *
      * @param  TusUpload  $upload
-     * @param  string  $name
-     * @param  string  $redirect
+     * @param  int  $offset The new transferred bytes offset
      * @return \Avvertix\TusUpload\TusUpload
      */
-    public function update(TusUpload $upload, $tusId, $offset = 0)
+    public function updateProgress(TusUpload $upload, $offset)
+    {
+        if($upload->completed() || $upload->cancelled()){
+            return $upload;
+        }
+
+        $upload->forceFill([
+            'offset' => $offset,
+        ])->save();
+
+        event(new TusUploadProgress($upload));
+
+        return $upload;
+    }
+
+    /**
+     * Update the given upload with the tus generated identifier.
+     *
+     * The update is performed only if the upload is not completed or cancelled
+     *
+     * @param  TusUpload  $upload
+     * @param  string  $tusId The tus generated identifier for the upload
+     * @return \Avvertix\TusUpload\TusUpload
+     */
+    public function updateTusId(TusUpload $upload, $tusId)
     {
         if($upload->completed() || $upload->cancelled()){
             return $upload;
@@ -112,10 +150,7 @@ class TusUploadRepository
 
         $upload->forceFill([
             'tus_id' => $tusId,
-            'offset' => $offset,
         ])->save();
-
-        event(new TusUploadProgress($upload));
 
         return $upload;
     }

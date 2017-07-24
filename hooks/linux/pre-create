@@ -2,4 +2,4 @@
 
 # pwd is packages/uploaddy/hooks/linux
 payload=$(cat /dev/stdin)
-php ../../../../artisan tus:hook -vvv pre-create "${payload}"
+php ../../../../../artisan tus:hook -vvv pre-create "${payload}"

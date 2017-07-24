@@ -63,10 +63,9 @@ class SupportsTusdTraitTest extends AbstractTestCase
         $this->assertEquals([
             '-host=127.0.0.1',
             '-port=1080',
-            '-base-path=uploads',
+            '-base-path=/uploads/',
             '-dir=' . storage_path('app/uploads'),
             '-hooks-dir=' .  static::hooksPath(),
-            '-behind-proxy'
         ], $arguments);
 
         // change some configuration parameters and check if the result is upgraded
@@ -80,10 +79,9 @@ class SupportsTusdTraitTest extends AbstractTestCase
         $this->assertEquals([
             '-host=127.0.0.1',
             '-port=9999',
-            '-base-path=uploads',
+            '-base-path=/uploads/',
             '-dir=' . storage_path('app/uploads'),
             '-hooks-dir=' .  static::hooksPath(),
-            '-behind-proxy',
             '-store-size=100',
             '-expose-metrics'
         ], $arguments);

@@ -1,11 +1,11 @@
 <?php
 
-namespace Avvertix\TusUpload;
+namespace Avvertix\TusUpload\Console;
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
-class TusHookRequest
+class TusHookInput
 {
 
     /**
@@ -21,7 +21,7 @@ class TusHookRequest
      * containing a json encoded object
      *
      * @param string $hookPayload
-     * @return TusHookRequest
+     * @return TusHookInput
      */
     public static function create($hookPayload)
     {

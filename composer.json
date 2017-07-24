@@ -26,7 +26,8 @@
         ],
         "psr-4": {
             "Avvertix\\TusUpload\\": "src/"
-        }
+        },
+        "files" : [ "src/helpers.php" ]
     },
     "autoload-dev": {
         "psr-4": {

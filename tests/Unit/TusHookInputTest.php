@@ -3,9 +3,9 @@
 namespace Tests\Unit;
 
 use Tests\AbstractTestCase;
-use Avvertix\TusUpload\TusHookRequest;
+use Avvertix\TusUpload\Console\TusHookInput;
 
-class TusHookRequestTest extends AbstractTestCase
+class TusHookInputTest extends AbstractTestCase
 {
 
     private function generateHookPayload($requestId, $tusId = '', $offset = 0)
@@ -19,7 +19,7 @@ class TusHookRequestTest extends AbstractTestCase
                           '"PartialUploads": null,' .
                           '"MetaData": {' .
                           '  "filename": "test.png",' .
-                          '  "api_token": "AAAAAAAAAAA",' .
+                          '  "token": "AAAAAAAAAAA",' .
                           '  "upload_request_id": "%1$s"' .
                           '}' .
                         '}', $requestId, $tusId, $offset);
@@ -30,9 +30,9 @@ class TusHookRequestTest extends AbstractTestCase
     {
         $hook_content = $this->generateHookPayload('14b1c4c77771671a8479bc0444bbc5ce', 'aaaaaaa', 100);
 
-        $request = TusHookRequest::create($hook_content);
+        $request = TusHookInput::create($hook_content);
 
-        $this->assertInstanceOf(TusHookRequest::class, $request);
+        $this->assertInstanceOf(TusHookInput::class, $request);
     }
 
     /** @test */
@@ -44,13 +44,13 @@ class TusHookRequestTest extends AbstractTestCase
 
         $hook_content = $this->generateHookPayload($request_id, $tus_id, 100);
 
-        $request = TusHookRequest::create($hook_content);
+        $request = TusHookInput::create($hook_content);
 
         $this->assertTrue($request->has('ID'));
         $this->assertTrue($request->has('Size'));
         $this->assertTrue($request->has('Offset'));
         $this->assertTrue($request->has('MetaData.upload_request_id'));
-        $this->assertTrue($request->has('MetaData.api_token'));
+        $this->assertTrue($request->has('MetaData.token'));
         $this->assertTrue($request->has('MetaData.filename'));
 
         $this->assertEquals($request_id, $request->id());
@@ -67,10 +67,10 @@ class TusHookRequestTest extends AbstractTestCase
 
         $hook_content = $this->generateHookPayload($request_id, $tus_id, $offset);
 
-        $request = TusHookRequest::create($hook_content);
+        $request = TusHookInput::create($hook_content);
 
         $this->assertEquals('test.png', $request->input('MetaData.filename'));
-        $this->assertEquals('AAAAAAAAAAA', $request->input('MetaData.api_token'));
+        $this->assertEquals('AAAAAAAAAAA', $request->input('MetaData.token'));
         $this->assertEquals($tus_id, $request->input('ID'));
         $this->assertEquals($offset, $request->input('Offset'));
         $this->assertEquals(46205, $request->input('Size'));

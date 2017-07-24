@@ -50,12 +50,14 @@ class TusUploadRepositoryTest extends AbstractTestCase
             'user_id' => 1,
             'request_id' => str_random(60),
             'filename' => 'test.pdf',
-            'size' => 100
+            'size' => 100,
+            'upload_token' => str_random(60),
+            'upload_token_expires_at' => \Carbon\Carbon::now()->addHour()
         ]);
 
         $upload->save();
 
-        $upload = $repository->update($upload, 25);
+        $upload = $repository->updateProgress($upload, 25);
 
         Event::assertDispatched(TusUploadProgress::class, function ($e) use ($upload) {
             return $e->upload->id === $upload->id &&
@@ -63,7 +65,7 @@ class TusUploadRepositoryTest extends AbstractTestCase
                    $e->upload->filename === $upload->filename &&
                    $e->upload->tus_id === $upload->tus_id &&
                    $e->upload->size === $upload->size &&
-                   $e->upload->offset === $upload->offset;
+                   $e->upload->offset === 25;
         });
     }
 
@@ -79,12 +81,15 @@ class TusUploadRepositoryTest extends AbstractTestCase
             'request_id' => str_random(60),
             'filename' => 'test.pdf',
             'size' => 100,
-            'completed' => true
+            'completed' => true,
+            'upload_token' => str_random(60),
+            'upload_token_expires_at' => \Carbon\Carbon::now()->addHour()
         ]);
 
         $upload->save();
 
-        $upload = $repository->update($upload, str_random(60), 25);
+        $upload = $repository->updateTusId($upload, str_random(60));
+        $upload = $repository->updateProgress($upload, 25);
 
         Event::assertNotDispatched(TusUploadProgress::class);
     }
@@ -101,12 +106,14 @@ class TusUploadRepositoryTest extends AbstractTestCase
             'request_id' => str_random(60),
             'filename' => 'test.pdf',
             'size' => 100,
-            'cancelled' => true
+            'cancelled' => true,
+            'upload_token' => str_random(60),
+            'upload_token_expires_at' => \Carbon\Carbon::now()->addHour()
         ]);
 
         $upload->save();
 
-        $upload = $repository->update($upload, str_random(60), 25);
+        $upload = $repository->updateProgress($upload, 25);
 
         Event::assertNotDispatched(TusUploadProgress::class);
     }
@@ -125,6 +132,8 @@ class TusUploadRepositoryTest extends AbstractTestCase
             'size' => 100,
             'cancelled' => false,
             'completed' => false,
+            'upload_token' => str_random(60),
+            'upload_token_expires_at' => \Carbon\Carbon::now()->addHour()
         ]);
 
         $upload->save();
@@ -161,6 +170,8 @@ class TusUploadRepositoryTest extends AbstractTestCase
             'size' => 100,
             'cancelled' => false,
             'completed' => false,
+            'upload_token' => str_random(60),
+            'upload_token_expires_at' => \Carbon\Carbon::now()->addHour()
         ]);
 
         $upload->save();

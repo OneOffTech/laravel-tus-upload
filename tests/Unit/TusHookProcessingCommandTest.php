@@ -7,23 +7,11 @@ use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Avvertix\TusUpload\TusUpload;
 
-use Avvertix\TusUpload\Contracts\AuthenticationResolver as AuthenticationResolverContract;
-use Avvertix\TusUpload\Auth\AuthenticationResolverFake;
-
 class TusHookProcessingCommandTest extends AbstractTestCase
 {
     use DatabaseMigrations;
 
-    /**
-     * Setup the test environment.
-     */
-    public function setUp()
-    {
-        parent::setUp();
-
-        // Bind the Fake authentication resolver, to test the components without having to use real users
-        $this->app->bind(AuthenticationResolverContract::class, AuthenticationResolverFake::class);
-    }
+    const UPLOAD_TOKEN = 'AAAAAAAAA';
 
 
     private function generateHookPayload($requestId, $tusId = '', $offset = 0)
@@ -37,10 +25,10 @@ class TusHookProcessingCommandTest extends AbstractTestCase
                           '"PartialUploads": null,' .
                           '"MetaData": {' .
                           '  "filename": "test.png",' .
-                          '  "api_token": "AAAAAAAAAAA",' .
+                          '  "token": "%4$s",' .
                           '  "upload_request_id": "%1$s"' .
                           '}' .
-                        '}', $requestId, $tusId, $offset);
+                        '}', $requestId, $tusId, $offset, self::UPLOAD_TOKEN);
     }
 
     /** @test */
@@ -50,12 +38,19 @@ class TusHookProcessingCommandTest extends AbstractTestCase
 
         $hook_content = $this->generateHookPayload($requestId);
 
+        TusUpload::forceCreate([
+            'request_id' => $requestId,
+            'user_id' => 1,
+            'filename' => 'test.png',
+            'size' => 46205,
+            'offset' => 0,
+            'upload_token' => self::UPLOAD_TOKEN,
+            'upload_token_expires_at' => \Carbon\Carbon::now()->addHour()
+        ]);
+
         $return_code = $this->artisan('tus:hook', ['hook' => 'pre-create', 'payload' => $hook_content]);
 
-        $upload = TusUpload::where('request_id', $requestId)->first();
-
         $this->assertEquals(0, $return_code);
-        $this->assertNotNull($upload);
 
     }
     
@@ -71,7 +66,9 @@ class TusHookProcessingCommandTest extends AbstractTestCase
             'user_id' => 1,
             'filename' => 'test.png',
             'size' => 46205,
-            'offset' => 0
+            'offset' => 0,
+            'upload_token' => self::UPLOAD_TOKEN,
+            'upload_token_expires_at' => \Carbon\Carbon::now()->addHour()
         ]);
 
         $return_code = $this->artisan('tus:hook', ['hook' => 'post-receive', 'payload' => $hook_content]);
@@ -95,7 +92,9 @@ class TusHookProcessingCommandTest extends AbstractTestCase
             'user_id' => 1,
             'filename' => 'test.png',
             'size' => 46205,
-            'offset' => 46205
+            'offset' => 46205,
+            'upload_token' => self::UPLOAD_TOKEN,
+            'upload_token_expires_at' => \Carbon\Carbon::now()->addHour()
         ]);
 
         $return_code = $this->artisan('tus:hook', ['hook' => 'post-finish', 'payload' => $hook_content]);
@@ -104,6 +103,7 @@ class TusHookProcessingCommandTest extends AbstractTestCase
 
         $this->assertEquals(0, $return_code);
         $this->assertNotNull($upload);
+        $this->assertNotNull($upload->tus_id);
         $this->assertTrue($upload->completed);
     }
     
@@ -119,7 +119,9 @@ class TusHookProcessingCommandTest extends AbstractTestCase
             'user_id' => 1,
             'filename' => 'test.png',
             'size' => 46205,
-            'offset' => 0
+            'offset' => 0,
+            'upload_token' => self::UPLOAD_TOKEN,
+            'upload_token_expires_at' => \Carbon\Carbon::now()->addHour()
         ]);
 
         $return_code = $this->artisan('tus:hook', ['hook' => 'post-terminate', 'payload' => $hook_content]);
