@@ -103,6 +103,7 @@ class TusHookProcessingCommandTest extends AbstractTestCase
 
         $this->assertEquals(0, $return_code);
         $this->assertNotNull($upload);
+        $this->assertNotNull($upload->tus_id);
         $this->assertTrue($upload->completed);
     }
     

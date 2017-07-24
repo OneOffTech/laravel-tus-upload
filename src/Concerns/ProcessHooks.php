@@ -53,7 +53,11 @@ trait ProcessHooks
         $upload = $this->uploads->findByUploadRequestAndToken($requestId, $token);
 
         // let's update the status of the upload
-        $this->uploads->update($upload, $payload->tusId(), $payload->input('Offset'));
+        $this->uploads->updateProgress($upload, $payload->input('Offset'));
+        
+        if(is_null($upload->tus_id)){
+            $this->uploads->updateTusId($upload, $payload->tusId());
+        }
 
         return true;
     }
@@ -71,6 +75,10 @@ trait ProcessHooks
         if(is_null($upload)){
             Log::error("Upload {$requestId}-{$token} not found.");
             return false;
+        }
+
+        if(is_null($upload->tus_id)){
+            $this->uploads->updateTusId($upload, $payload->tusId());
         }
 
         $this->uploads->complete($upload);
@@ -91,6 +99,10 @@ trait ProcessHooks
         if(is_null($upload)){
             Log::error("Upload {$requestId}-{$token} not found.");
             return false;
+        }
+
+        if(is_null($upload->tus_id)){
+            $this->uploads->updateTusId($upload, $payload->tusId());
         }
 
         $this->uploads->cancel($upload);

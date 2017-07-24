@@ -110,16 +110,39 @@ class TusUploadRepository
     }
 
     /**
-     * Update the given upload.
+     * Update the given upload upload progress.
      *
      * The update is performed only if the upload is not completed or cancelled
      *
      * @param  TusUpload  $upload
-     * @param  string  $name
-     * @param  string  $redirect
+     * @param  int  $offset The new transferred bytes offset
      * @return \Avvertix\TusUpload\TusUpload
      */
-    public function update(TusUpload $upload, $tusId, $offset = 0)
+    public function updateProgress(TusUpload $upload, $offset)
+    {
+        if($upload->completed() || $upload->cancelled()){
+            return $upload;
+        }
+
+        $upload->forceFill([
+            'offset' => $offset,
+        ])->save();
+
+        event(new TusUploadProgress($upload));
+
+        return $upload;
+    }
+
+    /**
+     * Update the given upload with the tus generated identifier.
+     *
+     * The update is performed only if the upload is not completed or cancelled
+     *
+     * @param  TusUpload  $upload
+     * @param  string  $tusId The tus generated identifier for the upload
+     * @return \Avvertix\TusUpload\TusUpload
+     */
+    public function updateTusId(TusUpload $upload, $tusId)
     {
         if($upload->completed() || $upload->cancelled()){
             return $upload;
@@ -127,10 +150,7 @@ class TusUploadRepository
 
         $upload->forceFill([
             'tus_id' => $tusId,
-            'offset' => $offset,
         ])->save();
-
-        event(new TusUploadProgress($upload));
 
         return $upload;
     }
