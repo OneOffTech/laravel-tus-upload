@@ -104,6 +104,10 @@ public function boot()
 The callback will receive the `$user` that wants to do the upload and the `CreateUploadRequest`. The request might
 contain custom metadata, according to the caller. Required inputs are the request `id`, the `filename`, while `filesize` 
 might be set, even if null. The `filesize` can be null if the browser don't support the size property on the File object.
+In addition the `filetype` attribute can be sent, if the file mime type is already known to client.
+
+Additional metadata can be sent in the request. In this case the additional fields will be saved in 
+the `metadata` on the `TusUpload` once the upload is authorized.
 
 **Javascript and the frontend**
 

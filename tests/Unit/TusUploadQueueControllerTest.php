@@ -47,6 +47,35 @@ class TusUploadQueueControllerTest extends AbstractTestCase
         $this->assertNotEmpty($original['upload_token']);
         $this->assertNotEmpty($original['location']);
     }
+    
+    /** @test */
+    public function upload_queue_entry_stores_metadata()
+    {
+        $this->withoutMiddleware();
+        
+        $controller = app(TusUploadQueueController::class);
+
+        $requestId = str_random(60);
+        $args = ['id' => $requestId, 'filename' => 'test.pdf', 'filesize' => 5, 'collection' => 5, 'filetype' => 'application/pdf'];
+
+        $base_request = CreateUploadRequest::createFromBase(\Symfony\Component\HttpFoundation\Request::create('/uploadqueue', 'POST', $args));
+        $request = Mockery::mock($base_request);
+
+        $request->shouldReceive('user')->andReturn(1);
+
+        $response = $controller->store($request);
+
+        $this->assertInstanceOf(\Illuminate\Http\JsonResponse::class, $response);
+
+        $upload = TusUpload::where('request_id', $requestId)->first();
+
+        $this->assertNotNull($upload);
+        $this->assertEquals($args['filename'], $upload->filename);
+        $this->assertEquals($args['filesize'], $upload->size);
+        $this->assertEquals($args['filetype'], $upload->mimetype);
+        $this->assertNotNull($upload->metadata);
+        $this->assertEquals(['collection' => 5], $upload->metadata);
+    }
 
 
     /** @test */

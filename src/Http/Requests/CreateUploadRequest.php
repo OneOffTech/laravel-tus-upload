@@ -27,6 +27,7 @@ class CreateUploadRequest extends FormRequest
             'id' => 'required|string|unique:tus_uploads_queue,request_id',
             'filename' => 'required|string|min:1',
             'filesize' => 'present|numeric|min:0',
+            'filetype' => 'filled|string',
         ];
     }
 }
