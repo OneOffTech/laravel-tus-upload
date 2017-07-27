@@ -9,15 +9,31 @@ before_script:
   - export COMPOSER_CACHE_DIR=`pwd`/.composer-cache
 
 
-unit_tests:
+unit_tests_5.6:
   cache:
     key: "laravel-tus-upload"
     paths:
     - .composer-cache/
-  image: "docker.klink.asia/open/docker-php:7.0-alpine"
+  image: "docker.klink.asia/open/docker-php:5.6"
   tags:
     - docker
   stage: test
   script:
     - composer install --prefer-dist
-    - ./vendor/bin/phpunit
+    - ./vendor/bin/phpunit --coverage-text --colors=never --coverage-html coverage
+
+unit_tests_7.0:
+  cache:
+    key: "laravel-tus-upload"
+    paths:
+    - .composer-cache/
+  image: "docker.klink.asia/open/docker-php:7.0"
+  tags:
+    - docker
+  stage: test
+  script:
+    - composer install --prefer-dist
+    - ./vendor/bin/phpunit --coverage-text --colors=never --coverage-html coverage
+  artifacts:
+    paths:
+    - coverage
