@@ -20,7 +20,7 @@ unit_tests_5.6:
   stage: test
   script:
     - composer install --prefer-dist
-    - ./vendor/bin/phpunit --coverage-text --colors=never --coverage-html coverage
+    - ./vendor/bin/phpunit
 
 unit_tests_7.0:
   cache:
@@ -33,7 +33,4 @@ unit_tests_7.0:
   stage: test
   script:
     - composer install --prefer-dist
-    - ./vendor/bin/phpunit --coverage-text --colors=never --coverage-html coverage
-  artifacts:
-    paths:
-    - coverage
+    - ./vendor/bin/phpunit
