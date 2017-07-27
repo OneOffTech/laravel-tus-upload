@@ -5,55 +5,52 @@ The upload process is separated in two distinct phases:
 1. Granting the upload to the client
 2. Transfering the file via Tus protocol
 
+![flow diagram](./assets/flow.png)
+
 ### Granting the upload to the client
 
 The first phase has the primary objective to authenticate the user that is making the upload request.
 
-The client sends a post request to `/uploadjobs` with the details of the upload, especially the request 
-identifier and the filename. The controller imposes the `web` guard on the route to ensure a session for 
-the user is active and checks if the Gate `upload-via-tus` grants the continuation of the upload, for the 
-user and the specific data passed in the request input.
+The client sends a post request to `/uploadjobs` with the details of the upload in json format, especially the request 
+identifier and the filename. The `/uploadjobs` route is defined under the `web`, therefore a valid session is needed.
+The authorization of the upload request is performed with the help of the `upload-via-tus` Gate. 
+The Gate receives the request, by default, with
+
+- `id`: the client assigned request identifier
+- `filename`: the name of the file to upload
+- `filesize`: the size of the file
+- `filetype`: the file mime type (can be null)
+
+other input arguments may be present, if sent by the JS client.
 
 If the request is authorized and validated, an entry in the upload queue table will be added, with a 
-specific `upload_token`. This token will ensure that the next phase is authorized to perform an upload.
-
-When the upload queue entry is setup the `TusUploadStarted` is triggered.
-
+specific `upload_token`. The `upload_token` is returned to the client in order to verify that future calls 
+with the tus protocol have been authorized. The `upload_token` has 1 hour validity, if the upload is not 
+started within that timeframe, the whole flow must be executed again.
+At the same time the `TusUploadStarted` event is triggered, so your Laravel application can do processing 
+on the added upload entry. The event is asynchronous.
 
 ### Transfering the file via Tus protocol
 
-Once the authorization phase completed, the client can start sending data to the tus server.
+After the upload is authorized and the client received the `upload_token` the normal flow of the Tus 
+protocol is followed.
 
-_1 - start of the upload_
+The client can start sending the preliminary information on the file to be uploaded, together 
+with the `upload_token`. Once received by the tus server, the `pre-create` hook is invoked to let 
+Laravel verify if the `upload_token` is valid. In case the token is still valid the upload is granted 
+and the client can start sending file chunks.
 
-In this phase the client sends the request for starting an upload to the tus server with the 
-`upload_token` as a metadata.
+While the file is being uploaded the tus server notify, in an asynchrounous way via the `post-receive` 
+hook, the upload progress.
+This is reflected in the upload jobs queue and also notified with the `TusUploadProgress` event.
 
-The tus server executes the `pre-create` hook, which invokes Laravel via an Artisan command, to 
-confirm that the upload token is valid and the upload can continue.
+Once the upload complete, the `TusUploadCompleted` event is triggered.
 
-_2 - uploading file content_
-
-The client, in this phase, proceed with data sending as described in the Tus protocol. On the server
-side the hook `post-receive` is triggered after each file chunk is received. The handling of this hook 
-is, again, performed via Artisan command and will update the entry in the upload queue.
-
-The rest of the application can listen for the `TusUploadProgress` event to gather the updated information 
-on the upload progress as soon as they arrive.
-
-_3 - completing the file upload_
-
-When the upload is finished, the tus server invokes the `post-finish` hook. In this case the handler 
-will mark the upload completed and trigger the `TusUploadCompleted` event.
-
-The application, within the event handler, can do operations on the file. It is encouraged to move the 
+The application, within that event handler, can do operations on the file. It is encouraged to move the 
 physical file to a different location than the tus server upload directory, as some file systems 
 might have a limit on the number of files you can store in a directory.
-
-_4 - in case of upload cancel_
 
 In case the client aborts the transfer, the tus server will call the `post-terminate` hook. This will 
 mark the upload as cancelled and contextually trigger the `TusUploadCancelled` event. 
 The partial uploaded file might not exists anymore at the time of the `TusUploadCancelled` event, 
 because the tus server might have already deleted it.
-

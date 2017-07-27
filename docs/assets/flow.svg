@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 16.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" id="Livello_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 width="515px" height="350.931px" viewBox="0 0 515 350.931" enable-background="new 0 0 515 350.931" xml:space="preserve">
+<rect y="126.931" fill="#91D4E2" width="515" height="215"/>
+<rect x="-1" y="32.931" fill="#D9E021" width="515" height="86"/>
+<line fill="none" stroke="#4D4D4D" stroke-miterlimit="10" x1="31.5" y1="19.931" x2="31.5" y2="350.931"/>
+<line fill="none" stroke="#4D4D4D" stroke-miterlimit="10" x1="248.5" y1="19.931" x2="248.5" y2="350.931"/>
+<line fill="none" stroke="#4D4D4D" stroke-miterlimit="10" x1="453.5" y1="19.931" x2="453.5" y2="350.931"/>
+<text transform="matrix(1 0 0 1 24.8799 11.3726)" font-family="'MyriadPro-Regular'" font-size="13.5874">JS</text>
+<text transform="matrix(1 0 0 1 228.2866 11.3726)" font-family="'MyriadPro-Regular'" font-size="13.5874">Laravel</text>
+<text transform="matrix(1 0 0 1 440.9688 11.3726)" font-family="'MyriadPro-Regular'" font-size="13.5874">tusd</text>
+<g>
+	<g>
+		<line fill="none" stroke="#000000" stroke-miterlimit="10" x1="31" y1="54.431" x2="241" y2="54.431"/>
+		<g>
+			<polygon points="239,59.825 247.635,54.839 239,49.853 			"/>
+		</g>
+	</g>
+</g>
+<g>
+	<g>
+		<line fill="none" stroke="#000000" stroke-miterlimit="10" x1="249" y1="204.431" x2="252" y2="204.431"/>
+		<line fill="none" stroke="#000000" stroke-miterlimit="10" stroke-dasharray="6,6" x1="258" y1="204.431" x2="440" y2="204.431"/>
+		<line fill="none" stroke="#000000" stroke-miterlimit="10" x1="443" y1="204.431" x2="446" y2="204.431"/>
+		<g>
+			<polygon points="445,209.287 453.635,204.3 445,199.314 			"/>
+		</g>
+	</g>
+</g>
+<g>
+	<g>
+		<line fill="none" stroke="#000000" stroke-miterlimit="10" x1="31" y1="157.431" x2="446" y2="157.431"/>
+		<g>
+			<polygon points="445,162.863 453.635,157.876 445,152.89 			"/>
+		</g>
+	</g>
+</g>
+<g>
+	<g>
+		<line fill="none" stroke="#000000" stroke-miterlimit="10" x1="31" y1="282.431" x2="451" y2="282.431"/>
+		<g>
+			<polygon points="444.744,285.609 444.402,284.668 450.557,282.428 444.402,280.188 444.744,279.249 453.48,282.428 			"/>
+		</g>
+	</g>
+</g>
+<g>
+	<g>
+		<line fill="none" stroke="#000000" stroke-miterlimit="10" x1="38" y1="228.431" x2="41" y2="228.431"/>
+		<line fill="none" stroke="#000000" stroke-miterlimit="10" stroke-dasharray="6,6" x1="47" y1="228.431" x2="448" y2="228.431"/>
+		<line fill="none" stroke="#000000" stroke-miterlimit="10" x1="450" y1="228.431" x2="453" y2="228.431"/>
+		<g>
+			<polygon points="39,233.064 30.365,228.078 39,223.091 			"/>
+		</g>
+	</g>
+</g>
+<rect x="247" y="54.931" width="4" height="50"/>
+<rect x="452" y="158.931" width="4" height="69"/>
+<rect x="452" y="282.931" width="4" height="25"/>
+<text transform="matrix(1 0 0 1 85.4917 46.3472)" font-family="'MyriadPro-Regular'" font-size="13.5874">upload request</text>
+<text transform="matrix(1 0 0 1 38.7993 152.7827)" font-family="'MyriadPro-Regular'" font-size="13.5874">start file upload (with upload_token)</text>
+<text transform="matrix(1 0 0 1 103.1011 276.7681)" font-family="'MyriadPro-Regular'" font-size="13.5874">chunk upload</text>
+<text transform="matrix(1 0 0 1 291.9849 175.9946)" font-family="'MyriadPro-Regular'" font-size="13.5874">verify(upload_token)</text>
+<text transform="matrix(1 0 0 1 58.2246 98.4321)" font-family="'MyriadPro-Regular'" font-size="13.5874">response with upload_token</text>
+<text transform="matrix(1 0 0 1 37.9321 220.7192)" font-family="'MyriadPro-Regular'" font-size="13.5874">upload continuation/error response</text>
+<text transform="matrix(1 0 0 1 257.0303 82.5806)" font-family="'MyriadPro-Regular'" font-size="13.5874">verify if request is authorized</text>
+<g>
+	<g>
+		<line fill="none" stroke="#000000" stroke-miterlimit="10" x1="247" y1="105.431" x2="244" y2="105.431"/>
+		<line fill="none" stroke="#000000" stroke-miterlimit="10" stroke-dasharray="6,6" x1="238" y1="105.431" x2="44" y2="105.431"/>
+		<line fill="none" stroke="#000000" stroke-miterlimit="10" x1="41" y1="105.431" x2="38" y2="105.431"/>
+		<g>
+			<polygon points="39,100.805 30.365,105.791 39,110.777 			"/>
+		</g>
+	</g>
+</g>
+<g>
+	<g>
+		<line fill="none" stroke="#000000" stroke-miterlimit="10" x1="453" y1="180.431" x2="256" y2="180.431"/>
+		<g>
+			<polygon points="258,175.536 249.365,180.521 258,185.507 			"/>
+		</g>
+	</g>
+</g>
+<text transform="matrix(1 0 0 1 295.375 302.8101)" font-family="'MyriadPro-Regular'" font-size="13.5874">upload status event</text>
+<g>
+	<g>
+		<line fill="none" stroke="#000000" stroke-miterlimit="10" x1="453" y1="307.431" x2="256" y2="307.431"/>
+		<g>
+			<polygon points="258,302.352 249.365,307.337 258,312.324 			"/>
+		</g>
+	</g>
+</g>
+<circle fill="#FFFFFF" cx="491.979" cy="75.219" r="15.286"/>
+<text transform="matrix(1 0 0 1 488.209 79.2085)" font-family="'MyriadPro-Bold'" font-size="13.5874">1</text>
+<circle fill="#FFFFFF" cx="491.979" cy="186.183" r="15.286"/>
+<text transform="matrix(1 0 0 1 488.209 190.1724)" font-family="'MyriadPro-Bold'" font-size="13.5874">2</text>
+</svg>
