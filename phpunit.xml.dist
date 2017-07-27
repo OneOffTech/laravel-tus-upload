@@ -21,4 +21,15 @@
         <env name="DB_CONNECTION" value="sqlite"/>
         <env name="DB_DATABASE" value=":memory:"/>-->
     </php>
+    <filter>
+        <blacklist>
+            <directory>vendor</directory>
+            <directory>test</directory>
+            <directory>config</directory>
+            <directory>routes</directory>
+        </blacklist>
+        <whitelist>
+            <directory>src</directory>
+        </whitelist>
+    </filter>
 </phpunit>
