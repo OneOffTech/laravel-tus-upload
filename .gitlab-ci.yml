@@ -34,3 +34,21 @@ unit_tests_7.0:
   script:
     - composer install --prefer-dist
     - ./vendor/bin/phpunit
+
+
+
+## Javascript unit tests
+js_tests:
+  image: node:6
+  stage: test
+  cache:
+    key: "laravel-tus-upload-js"
+    paths:
+    - .npm-cache
+  before_script:
+    - npm config set cache .npm-cache
+    - npm install -q
+  script:
+   - npm run test
+  tags:
+    - docker
