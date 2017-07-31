@@ -6447,21 +6447,25 @@ var tusuploader = function (options) {
          */
         QUEUED: 1,
         /**
+         * Upload has started, upload of the first chunk should begin shortly
+         */
+        STARTED: 2,
+        /**
          * Upload is in progress
          */
-        UPLOADING: 2,
+        UPLOADING: 3,
         /**
          * Upload is completed
          */
-        COMPLETED: 3,
+        COMPLETED: 4,
         /**
          * Upload has been cancelled
          */
-        CANCELLED: 4,
+        CANCELLED: 5,
         /**
          * File upload failed
          */
-        FAILED: 5
+        FAILED: 6
     };
 
     var defaultOptions = {
@@ -6533,6 +6537,7 @@ var tusuploader = function (options) {
 
         this.status = UploadStatus.UPLOADING;
         this.uploadPercentage = percentage;
+        this.uploadTransferredSize = bytesUploaded;
 
         ee$$1.emit('upload.progress', { upload: this, type: 'upload.progress', percentage: percentage, total: bytesTotal, transferred: bytesUploaded });
     }
@@ -6580,6 +6585,8 @@ var tusuploader = function (options) {
         this.status = UploadStatus.QUEUED;
         this.uploadToken = null;
         this.uploadPercentage = 0;
+        this.uploadSize = file.size;
+        this.uploadTransferredSize = 0;
         this.uploadRemainingTime = null;
 
         this.file = file;
@@ -6607,19 +6614,20 @@ var tusuploader = function (options) {
      */
     Upload.prototype.start = function () {
 
-        ee$$1.emit('upload.started', { upload: upload, type: 'upload.started' });
-
+        this.status = UploadStatus.STARTED;
+        ee$$1.emit('upload.started', { upload: this, type: 'upload.started' });
+        
         window.axios.post(options.endpoint, index({
             id: this.id,
             filename: this.metadata.filename,
             filesize: this.file.size || '',
             filetype: this.file.type || '',
         }, this.metadata)).then(function (response) {
-
+            
             this.uploadToken = response.data.upload_token;
             this.transport.options.metadata.token = this.uploadToken;
             this.transport.options.endpoint = response.data.location;
-
+            
             // set the upload token in the metadata of the transport
             this.status = UploadStatus.UPLOADING;
             this.transport.start();
