@@ -230,6 +230,8 @@ The `TusUploader.Upload` object define a single file added to the queue of the u
 - `status`: the file upload status, see TusUploader.Status
 - `uploadToken`: the upload authentication token granted by the server
 - `uploadPercentage`: the completion percentage
+- `uploadSize`: the total file size in bytes
+- `uploadTransferredSize`: the bytes received by the server
 - `file`: the original File instance added to the queue
 
 **methods**
