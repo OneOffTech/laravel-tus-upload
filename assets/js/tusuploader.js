@@ -9,7 +9,7 @@
 var tus = require("../../node_modules/tus-js-client/dist/tus");
 var EventEmitter = require('eventemitter-light');
 var cuid = require('cuid');
-var assignIn = require('lodash.assignIn');
+var assignIn = require('lodash.assignin');
 var _ = {
     assignIn : assignIn,
     remove : require('lodash.remove'),
