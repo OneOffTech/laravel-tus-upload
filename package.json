@@ -7,7 +7,9 @@
     "development": "node_modules/.bin/rollup --config",
     "watch": "node_modules/.bin/rollup --config --watch",
     "prod": "npm run production",
-    "production": "node_modules/.bin/rollup --config"
+    "production": "node_modules/.bin/rollup --config",
+    "test": "jest tests-js/*",
+    "test:watch": "jest --watch"
   },
   "devDependencies": {
     "cross-env": "^3.2.3",
@@ -15,12 +17,17 @@
     "rollup-plugin-commonjs": "^8.0.2",
     "rollup-plugin-filesize": "^1.4.2",
     "rollup-plugin-node-resolve": "^3.0.0",
-    "rollup-watch": "^4.0.0"
+    "rollup-watch": "^4.0.0",
+    "jest": "^20.0.1",
+    "jest-cli": "^19.0.2"
   },
   "dependencies": {
     "cuid": "~1.3.8",
     "eventemitter-light": "^0.2.2",
-    "tus-js-client": "^1.4.3",
-    "lodash.assignin": "^4.2.0"
+    "lodash.assignin": "^4.2.0",
+    "lodash.filter": "^4.6.0",
+    "lodash.find": "^4.6.0",
+    "lodash.remove": "^4.7.0",
+    "tus-js-client": "^1.4.3"
   }
 }

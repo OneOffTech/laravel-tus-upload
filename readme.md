@@ -180,7 +180,7 @@ For more information please refer to [docs/flow.md](./docs/flow.md) and [docs/da
 ```
 
 ```js
-var Uploader = new window.TusUploader({autoUpload: true});
+var uploader = new window.TusUploader({autoUpload: true});
 
 var input = document.getElementById('file');
 
@@ -189,10 +189,67 @@ input.addEventListener("change", function(e) {
     var file = e.target.files[0]
 
     // add it to the uploader queue
-    var addedUpload = Uploader.upload(file);
+    var addedUpload = uploader.upload(file);
 });
 
 ```
+
+### `TusUploader` object
+
+The `TusUploader` object handles file upload and queue management. To create an instance of the `TusUploader` use 
+the constructor function.
+
+```js
+var uploader = new window.TusUploader(options: { /*...*/ });
+```
+
+**arguments**
+
+- `option: Object`:
+ - `endpoint`: the URL path to which the library calls for authorizing a file upload
+ - `retryDelays`: the array of delays, in milliseconds, that will be used in case the tus server is not replying to requests
+ - `autoUpload`: a boolean indicating whenever the file added to the queue must be uploaded immediately
+
+**methods**
+
+- `add(file, metadata) : TusUploader.Upload` adds a file to the upload queue
+- `remove(id) : TusUploader.Upload[]` remove a file, given its id, from the queue. It cancel the upload if already in progress
+- `uploads(filter) : TusUploader.Upload` retrieve the upload queue. Optionally can be filtered using the filter predicate
+- `on(event, callback)` register an event listener
+- `off(event, callback)` unregister a previously registered event listener
+
+### `TusUploader.Upload` object
+
+The `TusUploader.Upload` object define a single file added to the queue of the uploads
+
+**properties**
+
+- `id`: the identifier associated to this upload
+- `metadata`: the metadata information about the upload, by default the filename. It is enriched with the metadata added once the upload has been added to the queue
+- `transport`: the instance of the TusClient that will handle the real file upload
+- `status`: the file upload status, see TusUploader.Status
+- `uploadToken`: the upload authentication token granted by the server
+- `uploadPercentage`: the completion percentage
+- `uploadSize`: the total file size in bytes
+- `uploadTransferredSize`: the bytes received by the server
+- `file`: the original File instance added to the queue
+
+**methods**
+
+- `start`: start the upload
+- `stop`: stop and cancel the upload
+
+
+### Events
+
+- `upload.queued` a File was added to the upload queue
+- `upload.started` a File upload, in the queue, was started
+- `upload.progress` a File in the queue is being uploaded and this is the last progress report
+- `upload.completed` a File upload completed
+- `upload.cancelled`: upload was in progress, but has been interruped
+- `upload.failed`: a File upload failed
+- `upload.removed`: a queued upload has been removed before sending the file to the server
+
 
 ## API
 
