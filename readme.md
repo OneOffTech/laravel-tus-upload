@@ -47,6 +47,39 @@ Next, register the TusUpload Service Provider in the providers array of your `co
 Avvertix\TusUpload\Providers\TusUploadServiceProvider::class,
 ```
 
+**Routes registration**
+
+The API routes are not anymore registered automatically by the service provider. This was done to enable 
+new integration scenario and more customization options.
+
+To register the routes call `\Avvertix\TusUpload\Tus::routes()` from within your application `RouteServiceProvider`
+
+```php
+<?php
+
+namespace App\Providers;
+
+use Avvertix\TusUpload\Tus;
+use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+
+class RouteServiceProvider extends ServiceProvider
+{
+    // ...
+
+    /**
+     * Define your route model bindings, pattern filters, etc.
+     *
+     * @return void
+     */
+    public function boot()
+    {
+        Tus::routes();
+
+        parent::boot();
+    }
+}
+```
+
 **Database migrations**
 
 The TusUpload service provider registers its own database migration directory with the framework, so 
