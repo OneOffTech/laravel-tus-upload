@@ -18,14 +18,14 @@ class TusServerStartCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'tus:start';
+    protected $signature = 'tus:start {--no-hooks : Disable tus hooks, upload progress will not be tracked}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Starts the tus server with the options configured in the uploaddy.php configuration file';
+    protected $description = 'Starts the tus server with the options configured in the configuration file';
 
     /**
      * Create a new command instance.
@@ -53,6 +53,12 @@ class TusServerStartCommand extends Command
 
         try {
             $this->line("Starting Tus uploader...");
+
+            $noHooks = $this->option('no-hooks');
+
+            if($noHooks){
+                config(['tusupload.hooks' => '']);
+            }
 
             static::startTusd(function ($type, $buffer) {
             

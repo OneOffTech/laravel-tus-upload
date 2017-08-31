@@ -114,9 +114,14 @@ trait SupportsTusd
             '-host=' . config('tusupload.host'),
             '-port=' . config('tusupload.port'),
             '-base-path=' . config('tusupload.base_path'),
-            '-dir=' .  config('tusupload.storage'),
-            '-hooks-dir=' .  static::hooksPath(),
+            '-dir=' .  config('tusupload.storage'),            
         ];
+
+        $hooksPath = static::hooksPath();
+
+        if(!empty($hooksPath)){
+            $arguments[] = '-hooks-dir=' . $hooksPath;
+        }
 
         if(config('tusupload.behind_proxy')){
             $arguments[] = '-behind-proxy';
@@ -159,6 +164,10 @@ trait SupportsTusd
     {
 
         $base = config('tusupload.hooks');
+
+        if(empty($base)){
+            return null;
+        }
 
         switch (PHP_OS) {
             case 'WINNT':

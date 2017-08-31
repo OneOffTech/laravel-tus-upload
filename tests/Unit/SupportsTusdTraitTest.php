@@ -85,6 +85,21 @@ class SupportsTusdTraitTest extends AbstractTestCase
             '-store-size=100',
             '-expose-metrics'
         ], $arguments);
+        
+        // make also the hooks config empty
+
+        $this->app['config']->set('tusupload.hooks', '');
+        
+        $arguments = static::tusdArguments();
+
+        $this->assertEquals([
+            '-host=127.0.0.1',
+            '-port=9999',
+            '-base-path=/uploads/',
+            '-dir=' . storage_path('app/uploads'),
+            '-store-size=100',
+            '-expose-metrics'
+        ], $arguments);
     }
 
     /** @test */
