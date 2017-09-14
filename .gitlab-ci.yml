@@ -14,7 +14,7 @@ unit_tests_5.6:
     key: "laravel-tus-upload"
     paths:
     - .composer-cache/
-  image: "docker.klink.asia/open/docker-php:5.6"
+  image: "docker.klink.asia/main/docker-php:5.6"
   tags:
     - docker
   stage: test
@@ -27,7 +27,7 @@ unit_tests_7.0:
     key: "laravel-tus-upload"
     paths:
     - .composer-cache/
-  image: "docker.klink.asia/open/docker-php:7.0"
+  image: "docker.klink.asia/main/docker-php:7.0"
   tags:
     - docker
   stage: test
