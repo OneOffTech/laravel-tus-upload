@@ -37,15 +37,15 @@ test('tusuploader add function accepts a file and adds it to the queue', done =>
   var added = uploader.add(file, {filetype: "text/plain"});
 
   expect(added).not.toBeUndefined();
-  expect(added).toHaveProperty('status', TusUploader.Status.QUEUED);
+  expect(added).toHaveProperty('status', uploader.Status.QUEUED);
   expect(added).toHaveProperty('id');
   expect(added).toHaveProperty('file');
   expect(added).toHaveProperty('uploadToken');
   expect(added).toHaveProperty('metadata');
 
-  expect(added.metadata).toMatchObject([
+  expect(added.metadata).toMatchObject(
     { filename: filename, upload_request_id : added.id, filetype: "text/plain" }
-  ]);
+  );
   expect(uploader.uploads()).toHaveLength(1);
 
 });

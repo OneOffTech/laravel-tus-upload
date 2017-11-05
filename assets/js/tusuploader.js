@@ -11,17 +11,17 @@ var EventEmitter = require('eventemitter-light');
 var cuid = require('cuid');
 var assignIn = require('lodash.assignin');
 var _ = {
-    assignIn : assignIn,
-    remove : require('lodash.remove'),
-    filter : require('lodash.filter')
+    assignIn: assignIn,
+    remove: require('lodash.remove'),
+    filter: require('lodash.filter')
 }
 
 /**
  * Creates a new Tus based file Uploader
  * 
- * @param {object} options
+ * @param {object} config
  */
-module.exports = function (options) {
+module.exports = function (config) {
 
     var UploadStatus = {
         /**
@@ -83,7 +83,7 @@ module.exports = function (options) {
 
     var uploadsQueue = [];
 
-    options = _.assignIn(defaultOptions, options || {});
+    var options = _.assignIn(defaultOptions, config || {});
 
     if (typeof document.querySelector === undefined) {
         throw new Error("TusUpload: Browser not supported.");
@@ -103,7 +103,6 @@ module.exports = function (options) {
      * Handle the tus-client error event
      */
     function handleUploadError(error) {
-        console.log('UploadError', this, "Failed because:", error);
 
         this.status = UploadStatus.FAILED;
 
@@ -115,7 +114,6 @@ module.exports = function (options) {
      */
     function handleUploadProgress(chunkSize, bytesUploaded, bytesTotal) {
         var percentage = (bytesUploaded / bytesTotal * 100).toFixed(2);
-        console.log('UploadProgress', this, bytesUploaded, bytesTotal, percentage + "%");
 
         this.status = UploadStatus.UPLOADING;
         this.uploadPercentage = percentage;
@@ -128,8 +126,6 @@ module.exports = function (options) {
      * Handle the tus-client success event
      */
     function handleUploadSuccess() {
-        console.log('UploadComplete', this/*, "Download %s from %s", upload.file.name, upload.url*/);
-
         this.status = UploadStatus.COMPLETED;
 
         ee.emit('upload.completed', { upload: this, type: 'upload.completed' });
@@ -214,9 +210,10 @@ module.exports = function (options) {
             this.status = UploadStatus.UPLOADING;
             this.transport.start();
 
-        }.bind(this)).catch(function (error) {
-            console.log(error);
-        }.bind(this));
+        }.bind(this)).
+        catch(function (error) {
+            handleUploadError(error);
+        });
 
 
         return this;

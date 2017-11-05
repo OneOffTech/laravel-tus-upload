@@ -39,10 +39,10 @@ unit_tests_7.0:
 
 ## Javascript unit tests
 js_tests:
-  image: node:6
+  image: node:8
   stage: test
   cache:
-    key: "laravel-tus-upload-js"
+    key: "laravel-tus-upload-js-node8"
     paths:
     - .npm-cache
   before_script:
