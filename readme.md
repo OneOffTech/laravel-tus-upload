@@ -29,16 +29,20 @@ To get started, install Laravel Tus Upload via the Composer package manager.
 ]
 ```
 
-Then you can require it
+Now you need to specify, in `composer.json`, that you accepts dev packages
 
 ```json
-"require": {
-    "avvertix/laravel-tus-upload": "dev-master"
-},
+"minimum-stability": "dev",
+"prefer-stable": true,
 ```
 
-```
-composer update avvertix/laravel-tus-upload
+With `"prefer-stable": true` composer will not try to download every development versions of 
+your, already added, dependencies.
+
+Now you can require the package with
+
+```bash
+composer require avvertix/laravel-tus-upload
 ```
 
 Next, register the TusUpload Service Provider in the providers array of your `config/app.php` configuration file:
@@ -46,6 +50,8 @@ Next, register the TusUpload Service Provider in the providers array of your `co
 ```php
 Avvertix\TusUpload\Providers\TusUploadServiceProvider::class,
 ```
+
+> Laravel 5.5 auto-registration is not supported yet
 
 **Routes registration**
 
