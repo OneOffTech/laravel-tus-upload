@@ -341,7 +341,7 @@ This is equal to the `tus:start` command with default options (assuming the star
 $PACKAGE_DIR/bin/tusd-linux --dir ./storage/app/uploads --hooks-dir $PACKAGE_DIR/hooks/linux -behind-proxy -base-path /uploads/
 ```
 
-## What's the Tus Base Path
+### What's the Tus Base Path
 
 Tus base-path is the endpoint where tusd listen for file upload requests. To work it must end with `/`.
 
