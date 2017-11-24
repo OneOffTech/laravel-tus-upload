@@ -1,4 +1,5 @@
 const TusUploader = require('../assets/js/tusuploader');
+// const AxiosMock = require('axios-mock-adapter');
 
 test('tusuploader is defined', () => {
   
@@ -79,6 +80,47 @@ test('tusuploader remove function accepts an upload id and removes it from the q
     expect(handler).toHaveBeenCalled();
   
   });
+
+// test('tusuploader cancel function accepts an upload id and cancel it', () => {
+
+//     var axiosmock = new AxiosMock(window.axios);
+    
+//     // Mock any GET request to /users
+//     // arguments for reply are (status, data, headers)
+//     mock.onPost('/uploadjobs/').reply(200, {
+//       data: [
+//         { upload_token: "a1",
+//           location: "/something" }
+//       ]
+//     });
+  
+//     var filename = 'foo.txt';
+//     var uploader = new TusUploader({autoUpload: true});
+//     const handler = jest.fn();
+  
+  
+//     uploader.on('upload.cancelled', handler);
+  
+//     var file = new File(["foo"], filename, {
+//       type: "text/plain",
+//     });
+  
+//     var added = uploader.add(file, {filetype: "text/plain"});
+  
+//     expect(added).not.toBeUndefined();
+//     expect(added).toHaveProperty('id');
+    
+    
+//     var cancelled = uploader.cancel(added.id);
+//     console.log(cancelled);
+//     expect(cancelled).not.toBeUndefined();
+//     expect(cancelled).toBe(added);
+//     expect(cancelled.status).toBe(5);
+//     expect(uploader.uploads()).toHaveLength(0);
+
+//     expect(handler).toHaveBeenCalled();
+  
+//   });
 
 
 

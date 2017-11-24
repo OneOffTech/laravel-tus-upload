@@ -82,7 +82,7 @@ class TusUploadQueueControllerTest extends AbstractTestCase
     public function upload_queue_is_returned_for_the_user()
     {
         $this->withoutMiddleware();
-        
+
         $controller = app(TusUploadQueueController::class);
 
         $upload = (new TusUpload)->forceFill([
@@ -111,9 +111,11 @@ class TusUploadQueueControllerTest extends AbstractTestCase
     }
 
     /** @test */
-    public function upload_queue_item_can_be_deleted()
+    public function upload_queue_item_can_be_cancelled()
     {
         $this->withoutMiddleware();
+        
+        Event::fake();
         
         $controller = app(TusUploadQueueController::class);
 
@@ -122,39 +124,6 @@ class TusUploadQueueControllerTest extends AbstractTestCase
             'request_id' => str_random(60),
             'filename' => 'test.pdf',
             'size' => 100,
-            'cancelled' => true,
-            'completed' => false,
-            'upload_token' => str_random(60),
-            'upload_token_expires_at' => \Carbon\Carbon::now()->addHour()
-        ]);
-
-        $upload->save();
-
-        // refreshing to get the upload id
-        $upload = $upload->fresh();
-
-        $request = Mockery::mock('Illuminate\Http\Request');
-
-        $request->shouldReceive('user')->andReturn(1);
-
-        $response = $controller->destroy($request, $upload);
-
-        $this->assertEquals(json_encode(['success' => 'ok']), $response->getContent());
-    }
-
-    /** @test */
-    public function upload_queue_item_that_is_in_progress_cannot_be_deleted()
-    {
-        $this->withoutMiddleware();
-        
-        $controller = app(TusUploadQueueController::class);
-
-        $upload = (new TusUpload)->forceFill([
-            'user_id' => 1,
-            'request_id' => str_random(60),
-            'filename' => 'test.pdf',
-            'size' => 100,
-            'offset' => 10,
             'cancelled' => false,
             'completed' => false,
             'upload_token' => str_random(60),
@@ -170,10 +139,16 @@ class TusUploadQueueControllerTest extends AbstractTestCase
 
         $request->shouldReceive('user')->andReturn(1);
 
-        $response = $controller->destroy($request, $upload);
+        $response = $controller->destroy($request, $upload->request_id);
 
-        $this->assertNotEquals(json_encode(['success' => 'ok']), $response->getContent());
+        $cancelled_upload = $upload->fresh();
+
+        $this->assertTrue($cancelled_upload->cancelled);
+        $this->assertEquals(json_encode($cancelled_upload), $response->getContent());
+
+        Event::assertDispatched(TusUploadCancelled::class, function ($e) use ($cancelled_upload) {
+            return $e->upload->id === $cancelled_upload->id;
+        });
     }
-
  
 }

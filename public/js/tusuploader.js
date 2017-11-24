@@ -6628,7 +6628,15 @@ var tusuploader = function (config) {
     Upload.prototype.stop = function () {
         this.transport.abort();
         this.status = UploadStatus.CANCELLED;
-        ee$$1.emit('upload.cancelled', { upload: this, type: 'upload.cancelled' });
+        
+        window.axios.delete(options.endpoint + '' + this.id).then(function (/* response */) {
+            ee$$1.emit('upload.cancelled', { upload: this, type: 'upload.cancelled' });
+            // console.log('Upload cancelled', response)
+        }.bind(this)).
+        catch(function (/* error */) {
+            // console.error('upload cancel error', error);
+        });
+
         return this;
     };
 
@@ -6720,6 +6728,32 @@ var tusuploader = function (config) {
             ee$$1.emit('upload.removed', { upload: removed, type: 'upload.removed' });
 
             return removed;
+        }
+
+        return null;
+    };
+    
+    /**
+     * Cancel the upload, identified by its id, from the queue.
+     *  
+     * @emits upload.cancelled when the upload is cancelled
+     * @return {Array|null} the cancelled uploads or null, if nothing has been cancelled
+     */
+    TusUploadInner.cancel = function(id){
+
+        var cancelled = _.remove(uploadsQueue, function(n){
+            return n.id === id;
+        });
+
+        if(cancelled && cancelled.length >= 1){
+
+            cancelled.forEach(function(element) {
+                if(element.status === UploadStatus.UPLOADING){
+                    element.stop();
+                }
+            }, this);
+
+            return cancelled.length == 1 ? cancelled[0] : cancelled;
         }
 
         return null;

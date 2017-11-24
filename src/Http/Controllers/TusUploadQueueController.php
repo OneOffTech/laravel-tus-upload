@@ -11,6 +11,7 @@ use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Avvertix\TusUpload\Http\Requests\CreateUploadRequest;
+use Avvertix\TusUpload\Events\TusUploadCancelled;
 
 class TusUploadQueueController extends BaseController
 {
@@ -78,19 +79,16 @@ class TusUploadQueueController extends BaseController
      * It can be done only if the upload is terminated (either 
      * because completed or cancelled)
      *
-     * @param  \Avvertix\TusUpload\TusUpload  $upload
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Request $request, TusUpload $upload)
+    public function destroy(Request $request, $upload)
     {
 
-        $done = $this->uploads->delete($upload);
+        $cancelled_upload = $this->uploads->cancel($this->uploads->findByUploadRequest($request->user(), $upload));
 
-        if(!$done){
-            return response()->json(['success' => false, 'error' => 'Not deletable because not completed or cancelled.']);
-        }
+        event(new TusUploadCancelled($cancelled_upload));
 
-        return response()->json(['success' => 'ok']);
+        return response()->json($cancelled_upload);
 
     }
 }

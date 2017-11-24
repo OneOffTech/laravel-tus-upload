@@ -41,9 +41,9 @@ class TusUploadRepository
      * @param  string  $requestId
      * @return \Avvertix\TusUpload\TusUpload|null
      */
-    public function findByUploadRequest($userId, $requestId)
+    public function findByUploadRequest($user, $requestId)
     {
-        return TusUpload::where('user_id', $userId)->where('request_id', $requestId)->first();
+        return TusUpload::where('user_id', $user instanceof Model ? $user->getKey() : $user)->where('request_id', $requestId)->first();
     }
 
     /**
@@ -180,9 +180,8 @@ class TusUploadRepository
      */
     public function cancel(TusUpload $upload)
     {
-        $upload->forceFill([
-            'cancelled' => true,
-        ])->save();
+        $upload->cancelled = true;
+        $upload->save();
 
         event(new TusUploadCancelled($upload));
 
