@@ -18,33 +18,10 @@ This package contains a PHP component for controlling the Tus upload server and 
 
 ## Installation
 
-To get started, install Laravel Tus Upload via the Composer package manager.
-
-> Currently the package is not public, therefore you need to add a repository entry in your `composer.json` file
-
-```json
-"repositories": [
-    {
-        "type": "vcs",
-        "url": "https://git.klink.asia/alessio.vertemati/laravel-tus-upload"
-    }
-]
-```
-
-Now you need to specify, in `composer.json`, that you accepts dev packages
-
-```json
-"minimum-stability": "dev",
-"prefer-stable": true,
-```
-
-With `"prefer-stable": true` composer will not try to download every development versions of 
-your, already added, dependencies.
-
-Now you can require the package with
+To get started, install Laravel Tus Upload via the [Composer](http://getcomposer.org/) package manager.
 
 ```bash
-composer require OneOffTech/laravel-tus-upload
+composer require oneofftech/laravel-tus-upload
 ```
 
 Next, register the TusUpload Service Provider in the providers array of your `config/app.php` configuration file:
@@ -53,12 +30,11 @@ Next, register the TusUpload Service Provider in the providers array of your `co
 OneOffTech\TusUpload\Providers\TusUploadServiceProvider::class,
 ```
 
-> Laravel 5.5 auto-registration is not supported yet
+> Laravel 5.5 should not require this step, as the package should auto-register the service provider
 
 **Routes registration**
 
-The API routes are not anymore registered automatically by the service provider. This was done to enable 
-new integration scenario and more customization options.
+The API routes are not registered automatically by the service provider. This is done on purpose to have more customization options, for example the usage of custom routes and controller logic.
 
 To register the routes call `\OneOffTech\TusUpload\Tus::routes()` from within your application `RouteServiceProvider`
 

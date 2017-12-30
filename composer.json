@@ -43,6 +43,11 @@
     "extra": {
         "brach-alias": {
             "dev-master": "0.3.x-dev"
+        },
+        "laravel": {
+            "providers": [
+                "OneOffTech\\TusUpload\\Providers\\TusUploadServiceProvider"
+            ]
         }
     }
 }
