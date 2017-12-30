@@ -1,8 +1,10 @@
-[![build status for the master branch](https://git.klink.asia/alessio.vertemati/laravel-tus-upload/badges/master/build.svg)](https://git.klink.asia/alessio.vertemati/laravel-tus-upload/commits/master) [![coverage report for the master branch](https://git.klink.asia/alessio.vertemati/laravel-tus-upload/badges/master/coverage.svg)](https://git.klink.asia/alessio.vertemati/laravel-tus-upload/commits/master)
+
 
 # Laravel [Tus](http://tus.io/) based Upload
 
 A package for handling resumable file uploads in a Laravel application via the [tus.io](http://tus.io/) resumable file upload protocol.
+
+This package contains a PHP component for controlling the Tus upload server and a javascript library for interacting with the server. The Tus upload server is the official [Tus server binary](https://github.com/tus/tusd), this package does not re-implement the tus protocol in pure PHP.
 
 > **This package currently works only on Linux based OS.** If you want to try it on Windows 10, please take 
 > into consideration to use the [Windows Subsystem for Linux](https://msdn.microsoft.com/en-us/commandline/wsl/install_guide)
@@ -42,13 +44,13 @@ your, already added, dependencies.
 Now you can require the package with
 
 ```bash
-composer require avvertix/laravel-tus-upload
+composer require OneOffTech/laravel-tus-upload
 ```
 
 Next, register the TusUpload Service Provider in the providers array of your `config/app.php` configuration file:
 
 ```php
-Avvertix\TusUpload\Providers\TusUploadServiceProvider::class,
+OneOffTech\TusUpload\Providers\TusUploadServiceProvider::class,
 ```
 
 > Laravel 5.5 auto-registration is not supported yet
@@ -58,14 +60,14 @@ Avvertix\TusUpload\Providers\TusUploadServiceProvider::class,
 The API routes are not anymore registered automatically by the service provider. This was done to enable 
 new integration scenario and more customization options.
 
-To register the routes call `\Avvertix\TusUpload\Tus::routes()` from within your application `RouteServiceProvider`
+To register the routes call `\OneOffTech\TusUpload\Tus::routes()` from within your application `RouteServiceProvider`
 
 ```php
 <?php
 
 namespace App\Providers;
 
-use Avvertix\TusUpload\Tus;
+use OneOffTech\TusUpload\Tus;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
 class RouteServiceProvider extends ServiceProvider
@@ -123,7 +125,7 @@ public function boot()
     $this->registerPolicies();
 
     Gate::define('upload-via-tus', function ($user, $upload_request) {
-        // $upload_request instanceof \Avvertix\TusUpload\Http\Requests\CreateUploadRequest
+        // $upload_request instanceof \OneOffTech\TusUpload\Http\Requests\CreateUploadRequest
         // ...
     });
 }
@@ -175,8 +177,7 @@ php artisan vendor:publish --tag=tusupload-config
 ### Starting the Tus server
 
 The tusd binary is already included in the package under the `/bin` folder. 
-The binaries are available for MacOS, Windows and Linux, each executable 
-has a suffix to distinguish between the OS version.
+The binaries are available for MacOS, Windows and Linux. The included binaries have been compiled for 64 bit architecture. Each executable has a suffix to distinguish between the OS version.
 
 To execute the Tusd server launch the artisan `tus:start` command.
 
@@ -362,8 +363,12 @@ further explanation.
 
 ## Contributions
 
-*to be documented*
+Thank you for considering contributing to the Laravel Tus Upload package!
+
+The contribution guide is not available yet, but in the meantime you can still submit Pull Requests.
+
+Development oriented documentation is located under the [`docs`](./docs/) folder in this repository.
 
 ## License
 
-*to be decided*
+This project is licensed under the MIT license, see [LICENSE.txt](./LICENSE.txt).
