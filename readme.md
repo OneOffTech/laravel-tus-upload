@@ -110,7 +110,7 @@ The Gate, named `upload-via-tus`, will let you verify deeply the upload action a
 is performing it.
 
 Currently you must define the [gate](https://laravel.com/docs/5.4/authorization#writing-gates) implementation.
-You do it in the `boot` method in the `AuthServiceProvider` class, like the next code block
+The suggested location where the Gate can be defined is it in the `boot` method of the `AuthServiceProvider` class:
 
 ```php
 /**

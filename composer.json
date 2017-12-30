@@ -5,7 +5,7 @@
     "license": "MIT",
     "type": "project",
     "require": {
-        "php": ">=5.6.4",
+        "php": ">=7.0",
         "illuminate/auth": "5.4.*",
         "illuminate/console": "5.4.*",
         "illuminate/contracts": "5.4.*",
@@ -42,7 +42,7 @@
     },
     "extra": {
         "brach-alias": {
-            "dev-master": "0.1.x-dev"
+            "dev-master": "0.3.x-dev"
         }
     }
 }
