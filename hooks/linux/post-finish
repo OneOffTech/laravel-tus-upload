@@ -1,5 +1,5 @@
 #!/bin/bash
 
-# pwd is vendor/avvertix/laravel-tus-upload/hooks/linux
+# pwd is vendor/oneofftech/laravel-tus-upload/hooks/linux
 payload=$(cat /dev/stdin)
 php ../../../../../artisan tus:hook -vvv post-finish "${payload}"

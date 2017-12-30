@@ -1,6 +1,6 @@
 <?php
 
-namespace Avvertix\TusUpload\Console;
+namespace OneOffTech\TusUpload\Console;
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;

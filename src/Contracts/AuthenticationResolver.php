@@ -1,6 +1,6 @@
 <?php
 
-namespace Avvertix\TusUpload\Contracts;
+namespace OneOffTech\TusUpload\Contracts;
 
 interface AuthenticationResolver
 {

@@ -7,13 +7,13 @@ use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Contracts\Auth\Access\Gate;
-use Avvertix\TusUpload\TusUpload;
-use Avvertix\TusUpload\Http\Controllers\TusUploadQueueController;
-use Avvertix\TusUpload\Events\TusUploadStarted;
-use Avvertix\TusUpload\Events\TusUploadProgress;
-use Avvertix\TusUpload\Events\TusUploadCompleted;
-use Avvertix\TusUpload\Events\TusUploadCancelled;
-use Avvertix\TusUpload\Http\Requests\CreateUploadRequest;
+use OneOffTech\TusUpload\TusUpload;
+use OneOffTech\TusUpload\Http\Controllers\TusUploadQueueController;
+use OneOffTech\TusUpload\Events\TusUploadStarted;
+use OneOffTech\TusUpload\Events\TusUploadProgress;
+use OneOffTech\TusUpload\Events\TusUploadCompleted;
+use OneOffTech\TusUpload\Events\TusUploadCancelled;
+use OneOffTech\TusUpload\Http\Requests\CreateUploadRequest;
 use Mockery;
 
 class TusUploadQueueControllerTest extends AbstractTestCase

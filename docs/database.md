@@ -45,5 +45,4 @@ Here is a brief description of all the fields:
 
 **Notes**
 
-To keep the implementation not dependendant on the Users table and model, the `user_id` field, that defines the 
-relationship with the user, is not a foreign key.
+To keep the implementation not dependendant on the Users table and model, the `user_id` field, that defines the relationship with the user, is not a foreign key.

@@ -1,11 +1,11 @@
 <?php
 
-namespace Avvertix\TusUpload\Console\Commands;
+namespace OneOffTech\TusUpload\Console\Commands;
 
 use Illuminate\Console\Command;
-use Avvertix\TusUpload\Console\SupportsTusd;
-use Avvertix\TusUpload\Events\TusUploaderStarted;
-use Avvertix\TusUpload\Events\TusUploaderStopped;
+use OneOffTech\TusUpload\Console\SupportsTusd;
+use OneOffTech\TusUpload\Events\TusUploaderStarted;
+use OneOffTech\TusUpload\Events\TusUploaderStopped;
 use Symfony\Component\Process\Process;
 
 class TusServerStartCommand extends Command

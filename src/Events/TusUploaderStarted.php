@@ -1,6 +1,6 @@
 <?php
 
-namespace Avvertix\TusUpload\Events;
+namespace OneOffTech\TusUpload\Events;
 
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Contracts\Queue\ShouldQueue;

@@ -1,14 +1,14 @@
 <?php
 
-namespace Avvertix\TusUpload\Providers;
+namespace OneOffTech\TusUpload\Providers;
 
 use Illuminate\Support\ServiceProvider;
 
-use Avvertix\TusUpload\Console\Commands\TusServerStartCommand;
-use Avvertix\TusUpload\Console\Commands\TusHookProcessingCommand;
+use OneOffTech\TusUpload\Console\Commands\TusServerStartCommand;
+use OneOffTech\TusUpload\Console\Commands\TusHookProcessingCommand;
 
-use Avvertix\TusUpload\Contracts\AuthenticationResolver as AuthenticationResolverContract;
-use Avvertix\TusUpload\Auth\AuthenticationResolver;
+use OneOffTech\TusUpload\Contracts\AuthenticationResolver as AuthenticationResolverContract;
+use OneOffTech\TusUpload\Auth\AuthenticationResolver;
 use Illuminate\Contracts\Auth\Access\Gate;
 use Illuminate\Support\Facades\Auth;
 

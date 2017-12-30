@@ -1,8 +1,8 @@
 <?php
 
-namespace Avvertix\TusUpload\Events;
+namespace OneOffTech\TusUpload\Events;
 
-use Avvertix\TusUpload\Events\TusUploadEvent;
+use OneOffTech\TusUpload\Events\TusUploadEvent;
 
 class TusUploadProgress extends TusUploadEvent
 {

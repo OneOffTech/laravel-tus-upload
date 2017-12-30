@@ -5,7 +5,7 @@ namespace Tests\Unit;
 use Tests\AbstractTestCase;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Avvertix\TusUpload\TusUpload;
+use OneOffTech\TusUpload\TusUpload;
 
 class TusHookProcessingCommandTest extends AbstractTestCase
 {

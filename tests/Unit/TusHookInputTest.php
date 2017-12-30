@@ -3,7 +3,7 @@
 namespace Tests\Unit;
 
 use Tests\AbstractTestCase;
-use Avvertix\TusUpload\Console\TusHookInput;
+use OneOffTech\TusUpload\Console\TusHookInput;
 
 class TusHookInputTest extends AbstractTestCase
 {

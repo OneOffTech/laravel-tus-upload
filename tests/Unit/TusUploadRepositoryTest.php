@@ -6,11 +6,11 @@ use Tests\AbstractTestCase;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Event;
-use Avvertix\TusUpload\TusUpload;
-use Avvertix\TusUpload\Events\TusUploadStarted;
-use Avvertix\TusUpload\Events\TusUploadProgress;
-use Avvertix\TusUpload\Events\TusUploadCompleted;
-use Avvertix\TusUpload\Events\TusUploadCancelled;
+use OneOffTech\TusUpload\TusUpload;
+use OneOffTech\TusUpload\Events\TusUploadStarted;
+use OneOffTech\TusUpload\Events\TusUploadProgress;
+use OneOffTech\TusUpload\Events\TusUploadCompleted;
+use OneOffTech\TusUpload\Events\TusUploadCancelled;
 
 class TusUploadRepositoryTest extends AbstractTestCase
 {
@@ -21,7 +21,7 @@ class TusUploadRepositoryTest extends AbstractTestCase
     {
         Event::fake();
 
-        $repository = app('Avvertix\TusUpload\TusUploadRepository');
+        $repository = app('OneOffTech\TusUpload\TusUploadRepository');
 
         $requestID = str_random(60);
 
@@ -44,7 +44,7 @@ class TusUploadRepositoryTest extends AbstractTestCase
     {
         Event::fake();
 
-        $repository = app('Avvertix\TusUpload\TusUploadRepository');
+        $repository = app('OneOffTech\TusUpload\TusUploadRepository');
 
         $upload = (new TusUpload)->forceFill([
             'user_id' => 1,
@@ -74,7 +74,7 @@ class TusUploadRepositoryTest extends AbstractTestCase
     {
         Event::fake();
 
-        $repository = app('Avvertix\TusUpload\TusUploadRepository');
+        $repository = app('OneOffTech\TusUpload\TusUploadRepository');
 
         $upload = (new TusUpload)->forceFill([
             'user_id' => 1,
@@ -99,7 +99,7 @@ class TusUploadRepositoryTest extends AbstractTestCase
     {
         Event::fake();
 
-        $repository = app('Avvertix\TusUpload\TusUploadRepository');
+        $repository = app('OneOffTech\TusUpload\TusUploadRepository');
 
         $upload = (new TusUpload)->forceFill([
             'user_id' => 1,
@@ -123,7 +123,7 @@ class TusUploadRepositoryTest extends AbstractTestCase
     {
         Event::fake();
 
-        $repository = app('Avvertix\TusUpload\TusUploadRepository');
+        $repository = app('OneOffTech\TusUpload\TusUploadRepository');
 
         $upload = (new TusUpload)->forceFill([
             'user_id' => 1,
@@ -161,7 +161,7 @@ class TusUploadRepositoryTest extends AbstractTestCase
     {
         Event::fake();
 
-        $repository = app('Avvertix\TusUpload\TusUploadRepository');
+        $repository = app('OneOffTech\TusUpload\TusUploadRepository');
 
         $upload = (new TusUpload)->forceFill([
             'user_id' => 1,

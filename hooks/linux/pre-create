@@ -1,5 +1,5 @@
 #!/bin/bash
 
-# pwd is packages/uploaddy/hooks/linux
+# pwd is vendor/oneofftech/laravel-tus-upload/hooks/linux
 payload=$(cat /dev/stdin)
 php ../../../../../artisan tus:hook -vvv pre-create "${payload}"

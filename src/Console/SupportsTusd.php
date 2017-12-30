@@ -1,12 +1,12 @@
 <?php
 
-namespace Avvertix\TusUpload\Console;
+namespace OneOffTech\TusUpload\Console;
 
 use RuntimeException;
 use Symfony\Component\Process\Process;
 use Symfony\Component\Process\ProcessBuilder;
-use Avvertix\TusUpload\Events\TusUploaderStarted;
-use Avvertix\TusUpload\Events\TusUploaderStopped;
+use OneOffTech\TusUpload\Events\TusUploaderStarted;
+use OneOffTech\TusUpload\Events\TusUploaderStopped;
 
 trait SupportsTusd
 {

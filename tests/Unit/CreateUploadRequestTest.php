@@ -4,7 +4,7 @@ namespace Tests\Unit;
 
 use Tests\AbstractTestCase;
 use Tests\FakeUser;
-use Avvertix\TusUpload\Http\Requests\CreateUploadRequest;
+use OneOffTech\TusUpload\Http\Requests\CreateUploadRequest;
 use Mockery;
 use Illuminate\Contracts\Auth\Access\Gate;
 

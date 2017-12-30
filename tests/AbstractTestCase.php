@@ -48,7 +48,7 @@ abstract class AbstractTestCase extends BaseTestCase
      */
     protected function getPackageProviders($app)
     {
-        return ['Avvertix\TusUpload\Providers\TusUploadServiceProvider'];
+        return ['OneOffTech\TusUpload\Providers\TusUploadServiceProvider'];
     }
 
 }

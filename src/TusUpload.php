@@ -1,6 +1,6 @@
 <?php
 
-namespace Avvertix\TusUpload;
+namespace OneOffTech\TusUpload;
 
 use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
@@ -8,7 +8,7 @@ use Carbon\Carbon;
 /**
  * An upload that is in progress via the Tus protocol.
  *
- * For accessing and manipulating models {@see \Avvertix\TusUpload\TusUploadRepository}
+ * For accessing and manipulating models {@see \OneOffTech\TusUpload\TusUploadRepository}
  *
  * @property int $id the autoincrement identifier of the upload
  * @property int $user_id the user identifier that is performing the upload

@@ -1,9 +1,9 @@
 <?php
 
-namespace Avvertix\Uploaddy;
+namespace OneOffTech\Uploaddy;
 
 use Illuminate\Container\Container;
-use Avvertix\TusUpload\TusUpload;
+use OneOffTech\TusUpload\TusUpload;
 
 trait HasUploads
 {

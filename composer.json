@@ -1,5 +1,5 @@
 {
-    "name": "avvertix/laravel-tus-upload",
+    "name": "oneofftech/laravel-tus-upload",
     "description": "Upload files to your Laravel application with the tus.io resumable upload protocol.",
     "keywords": ["laravel", "package", "tus", "upload"],
     "license": "MIT",
@@ -25,7 +25,7 @@
             "database"
         ],
         "psr-4": {
-            "Avvertix\\TusUpload\\": "src/"
+            "OneOffTech\\TusUpload\\": "src/"
         },
         "files" : [ "src/helpers.php" ]
     },

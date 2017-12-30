@@ -1,10 +1,10 @@
 <?php
 
-namespace Avvertix\TusUpload\Concerns;
+namespace OneOffTech\TusUpload\Concerns;
 
 use Illuminate\Container\Container;
-use Avvertix\TusUpload\TusUpload;
-use Avvertix\TusUpload\Console\TusHookInput;
+use OneOffTech\TusUpload\TusUpload;
+use OneOffTech\TusUpload\Console\TusHookInput;
 use Log;
 use Exception;
 

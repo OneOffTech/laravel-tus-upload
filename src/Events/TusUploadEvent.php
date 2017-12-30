@@ -1,17 +1,17 @@
 <?php
 
-namespace Avvertix\TusUpload\Events;
+namespace OneOffTech\TusUpload\Events;
 
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Avvertix\TusUpload\TusUpload;
+use OneOffTech\TusUpload\TusUpload;
 
 class TusUploadEvent implements ShouldQueue
 {
     use SerializesModels;
 
     /**
-     * @var \Avvertix\TusUpload\TusUpload
+     * @var \OneOffTech\TusUpload\TusUpload
      */
     public $upload;
 

@@ -1,12 +1,12 @@
 <?php
 
-namespace Avvertix\TusUpload;
+namespace OneOffTech\TusUpload;
 
-use Avvertix\TusUpload\TusUpload;
-use Avvertix\TusUpload\Events\TusUploadStarted;
-use Avvertix\TusUpload\Events\TusUploadProgress;
-use Avvertix\TusUpload\Events\TusUploadCompleted;
-use Avvertix\TusUpload\Events\TusUploadCancelled;
+use OneOffTech\TusUpload\TusUpload;
+use OneOffTech\TusUpload\Events\TusUploadStarted;
+use OneOffTech\TusUpload\Events\TusUploadProgress;
+use OneOffTech\TusUpload\Events\TusUploadCompleted;
+use OneOffTech\TusUpload\Events\TusUploadCancelled;
 use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
 
@@ -16,7 +16,7 @@ class TusUploadRepository
      * Get an upload by the given ID.
      *
      * @param  int  $id
-     * @return \Avvertix\TusUpload\TusUpload|null
+     * @return \OneOffTech\TusUpload\TusUpload|null
      */
     public function find($id)
     {
@@ -27,7 +27,7 @@ class TusUploadRepository
      * Get an upload by the given ID.
      *
      * @param  string  $tusId
-     * @return \Avvertix\TusUpload\TusUpload|null
+     * @return \OneOffTech\TusUpload\TusUpload|null
      */
     public function findByTusId($tusId)
     {
@@ -39,7 +39,7 @@ class TusUploadRepository
      *
      * @param  string  $userId
      * @param  string  $requestId
-     * @return \Avvertix\TusUpload\TusUpload|null
+     * @return \OneOffTech\TusUpload\TusUpload|null
      */
     public function findByUploadRequest($user, $requestId)
     {
@@ -51,7 +51,7 @@ class TusUploadRepository
      *
      * @param  string  $requestId
      * @param  string  $uploadToken
-     * @return \Avvertix\TusUpload\TusUpload|null
+     * @return \OneOffTech\TusUpload\TusUpload|null
      */
     public function findByUploadRequestAndToken($requestId, $uploadToken)
     {
@@ -84,7 +84,7 @@ class TusUploadRepository
      * @param  string  $mimeType
      * @param  long  $offset
      * @param  object|array  $metadata
-     * @return \Avvertix\TusUpload\TusUpload
+     * @return \OneOffTech\TusUpload\TusUpload
      */
     public function create($user, $requestId, $filename, $size, $mimeType = null, $offset = 0, $metadata = null)
     {
@@ -116,7 +116,7 @@ class TusUploadRepository
      *
      * @param  TusUpload  $upload
      * @param  int  $offset The new transferred bytes offset
-     * @return \Avvertix\TusUpload\TusUpload
+     * @return \OneOffTech\TusUpload\TusUpload
      */
     public function updateProgress(TusUpload $upload, $offset)
     {
@@ -140,7 +140,7 @@ class TusUploadRepository
      *
      * @param  TusUpload  $upload
      * @param  string  $tusId The tus generated identifier for the upload
-     * @return \Avvertix\TusUpload\TusUpload
+     * @return \OneOffTech\TusUpload\TusUpload
      */
     public function updateTusId(TusUpload $upload, $tusId)
     {
@@ -158,7 +158,7 @@ class TusUploadRepository
     /**
      * Delete the given upload. The operation cannot be undone.
      *
-     * @param  \Avvertix\TusUpload\TusUpload  $upload
+     * @param  \OneOffTech\TusUpload\TusUpload  $upload
      * @return boolean true if the upload was deleted, false otherwise
      */
     public function delete(TusUpload $upload)
@@ -176,7 +176,7 @@ class TusUploadRepository
      * Mark the given upload cancelled.
      *
      * @param  TusUpload  $upload
-     * @return \Avvertix\TusUpload\TusUpload
+     * @return \OneOffTech\TusUpload\TusUpload
      */
     public function cancel(TusUpload $upload)
     {
@@ -194,7 +194,7 @@ class TusUploadRepository
      * @param  TusUpload  $upload
      * @param  string  $name
      * @param  string  $redirect
-     * @return \Avvertix\TusUpload\TusUpload
+     * @return \OneOffTech\TusUpload\TusUpload
      */
     public function complete(TusUpload $upload)
     {

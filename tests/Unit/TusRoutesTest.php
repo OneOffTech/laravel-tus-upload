@@ -6,8 +6,8 @@ use Tests\AbstractTestCase;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Event;
-use Avvertix\TusUpload\TusUpload;
-use Avvertix\TusUpload\Tus;
+use OneOffTech\TusUpload\TusUpload;
+use OneOffTech\TusUpload\Tus;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Route;
 

@@ -1,24 +1,24 @@
 <?php
 
-namespace Avvertix\TusUpload\Http\Controllers;
+namespace OneOffTech\TusUpload\Http\Controllers;
 
-use Avvertix\TusUpload\TusUpload;
+use OneOffTech\TusUpload\TusUpload;
 use Illuminate\Http\Request;
-use Avvertix\TusUpload\TusUploadRepository;
+use OneOffTech\TusUpload\TusUploadRepository;
 
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
-use Avvertix\TusUpload\Http\Requests\CreateUploadRequest;
-use Avvertix\TusUpload\Events\TusUploadCancelled;
+use OneOffTech\TusUpload\Http\Requests\CreateUploadRequest;
+use OneOffTech\TusUpload\Events\TusUploadCancelled;
 
 class TusUploadQueueController extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
     /**
-     * @var \Avvertix\TusUpload\TusUploadRepository
+     * @var \OneOffTech\TusUpload\TusUploadRepository
      */
     private $uploads = null;
 
@@ -45,8 +45,8 @@ class TusUploadQueueController extends BaseController
      * Checks if the user can do the upload and returns the token 
      * for the real upload
      *
-     * @param  Avvertix\TusUpload\Http\Requests\CreateUploadRequest  $request
-     * @return \Illuminate\Http\Response|Avvertix\TusUpload\TusUpload
+     * @param  OneOffTech\TusUpload\Http\Requests\CreateUploadRequest  $request
+     * @return \Illuminate\Http\Response|OneOffTech\TusUpload\TusUpload
      */
     public function store(CreateUploadRequest $request)
     {

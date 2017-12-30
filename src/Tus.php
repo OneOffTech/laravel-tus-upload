@@ -1,6 +1,6 @@
 <?php
 
-namespace Avvertix\TusUpload;
+namespace OneOffTech\TusUpload;
 
 use Illuminate\Support\Facades\Route;
 
@@ -16,7 +16,7 @@ class Tus
     {
         Route::group([
             'prefix' => '',
-            'namespace' => 'Avvertix\TusUpload\Http\Controllers',
+            'namespace' => 'OneOffTech\TusUpload\Http\Controllers',
             'middleware' => 'web',
         ], function ($router) {
 

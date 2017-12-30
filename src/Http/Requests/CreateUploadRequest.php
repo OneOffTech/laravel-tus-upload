@@ -1,6 +1,6 @@
 <?php
 
-namespace Avvertix\TusUpload\Http\Requests;
+namespace OneOffTech\TusUpload\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 

@@ -1,12 +1,12 @@
 <?php
 
-namespace Avvertix\TusUpload\Console\Commands;
+namespace OneOffTech\TusUpload\Console\Commands;
 
 use Illuminate\Console\Command;
-use Avvertix\TusUpload\TusUploadRepository;
-use Avvertix\TusUpload\Concerns\ProcessHooks;
-use Avvertix\TusUpload\Console\TusHookInput;
-use Avvertix\TusUpload\Contracts\AuthenticationResolver;
+use OneOffTech\TusUpload\TusUploadRepository;
+use OneOffTech\TusUpload\Concerns\ProcessHooks;
+use OneOffTech\TusUpload\Console\TusHookInput;
+use OneOffTech\TusUpload\Contracts\AuthenticationResolver;
 use Log;
 use Exception;
 
@@ -31,7 +31,7 @@ class TusHookProcessingCommand extends Command
     protected $description = 'Receives a tus hook from command line and process it. You should not invoke this command directly.';
 
     /**
-     * @var \Avvertix\TusUpload\TusUploadRepository
+     * @var \OneOffTech\TusUpload\TusUploadRepository
      */
     private $uploads = null;
 

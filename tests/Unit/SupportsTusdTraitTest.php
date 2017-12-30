@@ -6,7 +6,7 @@ use Tests\AbstractTestCase;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Event;
-use Avvertix\TusUpload\Console\SupportsTusd;
+use OneOffTech\TusUpload\Console\SupportsTusd;
 
 class SupportsTusdTraitTest extends AbstractTestCase
 {
