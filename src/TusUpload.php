@@ -50,7 +50,7 @@ class TusUpload extends Model
      *
      * @var array
      */
-    protected $hidden = ['user_id', 'upload_token_expires_at'];
+    protected $hidden = ['user_id', 'upload_token_expires_at', 'upload_token', 'tus_id', 'id'];
 
     /**
      * The attributes that should be cast to native types.
