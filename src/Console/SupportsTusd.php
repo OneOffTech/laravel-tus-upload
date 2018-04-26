@@ -4,7 +4,6 @@ namespace OneOffTech\TusUpload\Console;
 
 use RuntimeException;
 use Symfony\Component\Process\Process;
-use Symfony\Component\Process\ProcessBuilder;
 use OneOffTech\TusUpload\Events\TusUploaderStarted;
 use OneOffTech\TusUpload\Events\TusUploaderStopped;
 
@@ -80,16 +79,18 @@ trait SupportsTusd
             throw new RuntimeException("Invalid path to tusd [{$driver}, {$path}].");
         }
 
-        $builder = (new ProcessBuilder())
-                ->setPrefix(realpath($driver));
+        // $builder = (new ProcessBuilder())
+        //         ->setPrefix();
 
-        $arguments = static::tusdArguments();
+                
+        $tus_arguments = static::tusdArguments();
+        
+        // foreach ($arguments as $argument) {
+        //     $builder->add($argument);
+        // }
+        $arguments = array_merge([realpath($driver)], $tus_arguments);
 
-        foreach ($arguments as $argument) {
-            $builder->add($argument);
-        }
-
-        return $builder->getProcess();
+        return new Process($arguments);
     }
 
     /**
