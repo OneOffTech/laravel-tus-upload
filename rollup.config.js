@@ -10,9 +10,9 @@ export default [
 		input: 'assets/js/tusuploader.js',
 		output: {
 			file: pkg.main,
-			format: 'iife'
+			format: 'iife',
+			name: 'TusUploader'
 		},
-		name: 'TusUploader',
 		plugins: [
 			resolve({browser: true}),
 			eslint(),
