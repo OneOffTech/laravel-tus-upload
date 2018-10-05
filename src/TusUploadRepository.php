@@ -149,8 +149,32 @@ class TusUploadRepository
         }
 
         $upload->forceFill([
-            'tus_id' => $tusId,
+            'tus_id' => $tusId,            
         ])->save();
+
+        return $upload;
+    }
+    
+    /**
+     * Update the TusUpload entry with tusId and offset
+     * 
+     * @param  TusUpload  $upload
+     * @param  string  $tusId The tus generated identifier for the upload
+     * @param  int  $offset The new transferred bytes offset
+     * @return \OneOffTech\TusUpload\TusUpload
+     */
+    public function updateTusIdAndProgress(TusUpload $upload, $tusId, $offset)
+    {
+        if($upload->completed() || $upload->cancelled()){
+            return $upload;
+        }
+
+        $upload->forceFill([
+            'tus_id' => $tusId,
+            'offset' => $offset,
+        ])->save();
+            
+        event(new TusUploadProgress($upload));
 
         return $upload;
     }

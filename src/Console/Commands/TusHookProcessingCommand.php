@@ -60,9 +60,6 @@ class TusHookProcessingCommand extends Command
 
         $payload = TusHookInput::create($payloadString);
 
-        Log::info("Processing $hook...", ['payload' => $payload]);
-
-
         if(!in_array($hook, ['pre-create', 'post-finish', 'post-terminate', 'post-receive'])){
             throw new Exception("Unrecognized hook {$hook}");
         }
@@ -76,8 +73,6 @@ class TusHookProcessingCommand extends Command
         }
 
         $done = $this->{camel_case($hook)}($payload);
-
-        Log::info("$hook processed.", ['payload' => $payload, 'done' => $done]);
 
         return $done ? 0 : 1;
     }
