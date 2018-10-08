@@ -980,12 +980,7 @@ var TusUploader = (function () {
 
 	});
 
-	var tus$1 = unwrapExports(tus);
-
-	var tus$2 = /*#__PURE__*/Object.freeze({
-		default: tus$1,
-		__moduleExports: tus
-	});
+	unwrapExports(tus);
 
 	var ee = createCommonjsModule(function (module) {
 	module.exports = {
@@ -1026,44 +1021,21 @@ var TusUploader = (function () {
 	var ee_3 = ee.emit;
 	var ee_4 = ee.once;
 
-	var ee$1 = /*#__PURE__*/Object.freeze({
-		default: ee,
-		__moduleExports: ee,
-		on: ee_1,
-		removeListener: ee_2,
-		emit: ee_3,
-		once: ee_4
-	});
-
 	var pad = function pad (num, size) {
 	  var s = '000000000' + num;
 	  return s.substr(s.length - size);
 	};
 
-	var pad$1 = /*#__PURE__*/Object.freeze({
-		default: pad,
-		__moduleExports: pad
-	});
-
-	var pad$2 = ( pad$1 && pad ) || pad$1;
-
 	var env = typeof window === 'object' ? window : self;
 	var globalCount = Object.keys(env).length;
 	var mimeTypesLength = navigator.mimeTypes ? navigator.mimeTypes.length : 0;
-	var clientId = pad$2((mimeTypesLength +
+	var clientId = pad((mimeTypesLength +
 	  navigator.userAgent.length).toString(36) +
 	  globalCount.toString(36), 4);
 
 	var fingerprint_browser = function fingerprint () {
 	  return clientId;
 	};
-
-	var fingerprint_browser$1 = /*#__PURE__*/Object.freeze({
-		default: fingerprint_browser,
-		__moduleExports: fingerprint_browser
-	});
-
-	var fingerprint = ( fingerprint_browser$1 && fingerprint_browser ) || fingerprint_browser$1;
 
 	/**
 	 * cuid.js
@@ -1086,7 +1058,7 @@ var TusUploader = (function () {
 	  discreteValues = Math.pow(base, blockSize);
 
 	function randomBlock () {
-	  return pad$2((Math.random() *
+	  return pad((Math.random() *
 	    discreteValues << 0)
 	    .toString(base), blockSize);
 	}
@@ -1108,12 +1080,12 @@ var TusUploader = (function () {
 	    timestamp = (new Date().getTime()).toString(base),
 
 	    // Prevent same-machine collisions.
-	    counter = pad$2(safeCounter().toString(base), blockSize),
+	    counter = pad(safeCounter().toString(base), blockSize),
 
 	    // A few chars to generate distinct ids for different
 	    // clients (so different computers are far less
 	    // likely to generate the same id)
-	    print = fingerprint(),
+	    print = fingerprint_browser(),
 
 	    // Grab some more chars from Math.random()
 	    random = randomBlock() + randomBlock();
@@ -1124,22 +1096,30 @@ var TusUploader = (function () {
 	cuid.slug = function slug () {
 	  var date = new Date().getTime().toString(36),
 	    counter = safeCounter().toString(36).slice(-4),
-	    print = fingerprint().slice(0, 1) +
-	      fingerprint().slice(-1),
+	    print = fingerprint_browser().slice(0, 1) +
+	      fingerprint_browser().slice(-1),
 	    random = randomBlock().slice(-2);
 
 	  return date.slice(-2) +
 	    counter + print + random;
 	};
 
-	cuid.fingerprint = fingerprint;
+	cuid.isCuid = function isCuid (stringToCheck) {
+	  if (typeof stringToCheck !== 'string') return false;
+	  if (stringToCheck.startsWith('c')) return true;
+	  return false;
+	};
+
+	cuid.isSlug = function isSlug (stringToCheck) {
+	  if (typeof stringToCheck !== 'string') return false;
+	  var stringLength = stringToCheck.length;
+	  if (stringLength >= 7 && stringLength <= 10) return true;
+	  return false;
+	};
+
+	cuid.fingerprint = fingerprint_browser;
 
 	var cuid_1 = cuid;
-
-	var cuid$1 = /*#__PURE__*/Object.freeze({
-		default: cuid_1,
-		__moduleExports: cuid_1
-	});
 
 	/**
 	 * lodash (Custom Build) <https://lodash.com/>
@@ -1767,11 +1747,6 @@ var TusUploader = (function () {
 	}
 
 	var lodash_assignin = assignIn;
-
-	var lodash_assignin$1 = /*#__PURE__*/Object.freeze({
-		default: lodash_assignin,
-		__moduleExports: lodash_assignin
-	});
 
 	var lodash_remove = createCommonjsModule(function (module, exports) {
 	/**
@@ -4114,11 +4089,6 @@ var TusUploader = (function () {
 	}
 
 	module.exports = remove;
-	});
-
-	var lodash_remove$1 = /*#__PURE__*/Object.freeze({
-		default: lodash_remove,
-		__moduleExports: lodash_remove
 	});
 
 	var lodash_filter = createCommonjsModule(function (module, exports) {
@@ -6490,23 +6460,6 @@ var TusUploader = (function () {
 	module.exports = filter;
 	});
 
-	var lodash_filter$1 = /*#__PURE__*/Object.freeze({
-		default: lodash_filter,
-		__moduleExports: lodash_filter
-	});
-
-	var tus$3 = ( tus$2 && tus$1 ) || tus$2;
-
-	var EventEmitter = ( ee$1 && ee ) || ee$1;
-
-	var cuid$2 = ( cuid$1 && cuid_1 ) || cuid$1;
-
-	var assignIn$1 = ( lodash_assignin$1 && lodash_assignin ) || lodash_assignin$1;
-
-	var require$$0 = ( lodash_remove$1 && lodash_remove ) || lodash_remove$1;
-
-	var require$$1 = ( lodash_filter$1 && lodash_filter ) || lodash_filter$1;
-
 	/**
 	 * Tus based client uploader.
 	 * 
@@ -6520,9 +6473,9 @@ var TusUploader = (function () {
 
 
 	var _ = {
-	    assignIn: assignIn$1,
-	    remove: require$$0,
-	    filter: require$$1
+	    assignIn: lodash_assignin,
+	    remove: lodash_remove,
+	    filter: lodash_filter
 	};
 
 	/**
@@ -6588,7 +6541,7 @@ var TusUploader = (function () {
 	        chunkSize: 5000
 	    };
 
-	    var ee = Object.create(EventEmitter).constructor();
+	    var ee$$1 = Object.create(ee).constructor();
 
 	    var uploadsQueue = [];
 
@@ -6602,7 +6555,7 @@ var TusUploader = (function () {
 	        throw new Error("TusUpload: Url not specified.");
 	    }
 
-	    if (!tus$3.isSupported) {
+	    if (!tus.isSupported) {
 	        throw new Error("TusUpload: Tus upload protocol not supported.");
 	    }
 
@@ -6615,7 +6568,7 @@ var TusUploader = (function () {
 
 	        this.status = UploadStatus.FAILED;
 
-	        ee.emit('upload.failed', { upload: this, type: 'upload.failed', error: error });
+	        ee$$1.emit('upload.failed', { upload: this, type: 'upload.failed', error: error });
 	    }
 
 	    /**
@@ -6628,7 +6581,7 @@ var TusUploader = (function () {
 	        this.uploadPercentage = percentage;
 	        this.uploadTransferredSize = bytesUploaded;
 
-	        ee.emit('upload.progress', { upload: this, type: 'upload.progress', percentage: percentage, total: bytesTotal, transferred: bytesUploaded });
+	        ee$$1.emit('upload.progress', { upload: this, type: 'upload.progress', percentage: percentage, total: bytesTotal, transferred: bytesUploaded });
 	    }
 
 	    /**
@@ -6637,7 +6590,7 @@ var TusUploader = (function () {
 	    function handleUploadSuccess() {
 	        this.status = UploadStatus.COMPLETED;
 
-	        ee.emit('upload.completed', { upload: this, type: 'upload.completed' });
+	        ee$$1.emit('upload.completed', { upload: this, type: 'upload.completed' });
 	    }
 
 
@@ -6651,7 +6604,7 @@ var TusUploader = (function () {
 	     */
 	    function Upload(file, metadata) {
 
-	        this.id = cuid$2();
+	        this.id = cuid_1();
 
 	        this.metadata = _.assignIn({
 	            filename: file.name,
@@ -6659,7 +6612,7 @@ var TusUploader = (function () {
 	        }, metadata || {});
 
 	        // Create a new tus upload
-	        this.transport = new tus$3.Upload(file, {
+	        this.transport = new tus.Upload(file, {
 	            endpoint: options.tus_endpoint,
 	            retryDelays: options.retryDelays,
 	            chunkSize: options.chunkSize,
@@ -6692,7 +6645,7 @@ var TusUploader = (function () {
 	        this.status = UploadStatus.CANCELLED;
 	        
 	        window.axios.delete(options.endpoint + '' + this.id).then(function (/* response */) {
-	            ee.emit('upload.cancelled', { upload: this, type: 'upload.cancelled' });
+	            ee$$1.emit('upload.cancelled', { upload: this, type: 'upload.cancelled' });
 	            // console.log('Upload cancelled', response)
 	        }.bind(this)).
 	        catch(function (/* error */) {
@@ -6710,9 +6663,9 @@ var TusUploader = (function () {
 	    Upload.prototype.start = function () {
 
 	        this.status = UploadStatus.STARTED;
-	        ee.emit('upload.started', { upload: this, type: 'upload.started' });
+	        ee$$1.emit('upload.started', { upload: this, type: 'upload.started' });
 	        
-	        window.axios.post(options.endpoint, assignIn$1({
+	        window.axios.post(options.endpoint, lodash_assignin({
 	            id: this.id,
 	            filename: this.metadata.filename,
 	            filesize: this.file.size || '',
@@ -6753,7 +6706,7 @@ var TusUploader = (function () {
 	        // add it to the queue
 	        uploadsQueue.push(upload);
 
-	        ee.emit('upload.queued', { upload: upload, type: 'upload.queued' });
+	        ee$$1.emit('upload.queued', { upload: upload, type: 'upload.queued' });
 
 	        if (options.autoUpload) {
 	            // Immediately start the upload
@@ -6787,7 +6740,7 @@ var TusUploader = (function () {
 	                }
 	            }, this);
 
-	            ee.emit('upload.removed', { upload: removed, type: 'upload.removed' });
+	            ee$$1.emit('upload.removed', { upload: removed, type: 'upload.removed' });
 
 	            return removed;
 	        }
@@ -6841,7 +6794,7 @@ var TusUploader = (function () {
 	     */
 	    TusUploadInner.on = function (event, callback) {
 
-	        ee.on(event, callback);
+	        ee$$1.on(event, callback);
 
 	        return TusUploadInner;
 	    };
@@ -6855,7 +6808,7 @@ var TusUploader = (function () {
 	     */
 	    TusUploadInner.off = function (event, callback) {
 
-	        ee.removeListener(event, callback);
+	        ee$$1.removeListener(event, callback);
 
 	        return TusUploadInner;
 	    };
