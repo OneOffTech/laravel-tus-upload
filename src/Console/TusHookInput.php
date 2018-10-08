@@ -138,15 +138,8 @@ class TusHookInput
         return $this->input($property);
     }
 
-    // /**
-    //  * Get the validation rules that apply to the request.
-    //  *
-    //  * @return array
-    //  */
-    // public function rules()
-    // {
-    //     return [
-    //         //
-    //     ];
-    // }
+    public function __toString()
+    {
+        return json_encode($this->data);
+    }
 }
