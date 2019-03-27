@@ -13,25 +13,24 @@
   },
   "devDependencies": {
     "axios": "^0.18.0",
-    "axios-mock-adapter": "^1.15.0",
+    "axios-mock-adapter": "^1.16.0",
     "cross-env": "^5.2.0",
-    "jest": "^22.4.4",
-    "jest-cli": "^22.4.4",
-    "rollup": "^0.58.2",
-    "rollup-plugin-commonjs": "^9.1.8",
-    "rollup-plugin-eslint": "^4.0.0",
-    "rollup-plugin-filesize": "^1.5.0",
-    "rollup-plugin-node-resolve": "^3.4.0",
-    "rollup-watch": "^4.3.1"
+    "jest": "^24.5.0",
+    "jest-cli": "^24.5.0",
+    "rollup": "^1.7.3",
+    "rollup-plugin-commonjs": "^9.2.2",
+    "rollup-plugin-eslint": "^5.1.0",
+    "rollup-plugin-filesize": "^6.0.1",
+    "rollup-plugin-node-resolve": "^4.0.1"
   },
   "dependencies": {
-    "cuid": "^2.1.4",
+    "cuid": "^2.1.6",
     "eventemitter-light": "^0.2.2",
     "lodash.assignin": "^4.2.0",
     "lodash.filter": "^4.6.0",
     "lodash.find": "^4.6.0",
     "lodash.remove": "^4.7.0",
-    "tus-js-client": "^1.5.1"
+    "tus-js-client": "^1.6.1"
   },
   "jest": {
     "testURL": "http://localhost/"
