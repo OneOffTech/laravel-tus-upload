@@ -9,6 +9,8 @@ use OneOffTech\TusUpload\TusUpload;
 
 class TusHookProcessingCommandTest extends AbstractTestCase
 {
+    public $mockConsoleOutput = false;
+    
     use DatabaseMigrations;
 
     const UPLOAD_TOKEN = 'AAAAAAAAA';
