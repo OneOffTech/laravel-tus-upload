@@ -3,15 +3,41 @@ language: php
 php:
   - 7.0
   - 7.1
+  - 7.2
 
 env:
-  matrix:
-    - COMPOSER_FLAGS="--prefer-lowest"
-    - COMPOSER_FLAGS=""
+  - LARAVEL_VERSION=5.5.*
+  - LARAVEL_VERSION=5.6.*
+  - LARAVEL_VERSION=5.7.*
+  - LARAVEL_VERSION=5.8.*
+matrix:
+  exclude:
+    - php: 7.0
+      env: LARAVEL_VERSION=5.6.*
+    - php: 7.0
+      env: LARAVEL_VERSION=5.7.*
+    - php: 7.0
+      env: LARAVEL_VERSION=5.8.*
 
-before_script:
+sudo: false
+
+before_install:
+  - composer require "illuminate/auth:${LARAVEL_VERSION}" --no-update
+  - composer require "illuminate/console:${LARAVEL_VERSION}" --no-update
+  - composer require "illuminate/contracts:${LARAVEL_VERSION}" --no-update
+  - composer require "illuminate/database:${LARAVEL_VERSION}" --no-update
+  - composer require "illuminate/events:${LARAVEL_VERSION}" --no-update
+  - composer require "illuminate/support:${LARAVEL_VERSION}" --no-update
+  - composer require "illuminate/view:${LARAVEL_VERSION}" --no-update
+
+
+install:
   - travis_retry composer self-update
-  - travis_retry composer update ${COMPOSER_FLAGS} --no-interaction
+  - travis_retry composer update --no-interaction --prefer-dist
 
 script:
   - vendor/bin/phpunit
+
+notifications:
+  email:
+    on_success: never
