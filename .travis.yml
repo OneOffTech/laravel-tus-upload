@@ -1,5 +1,11 @@
 language: php
 
+branches:
+  only:
+  - master
+  - /^v\d+\.\d+(\.\d+)?(-\S*)?$/
+  - /^\d+\.\d+?$/
+
 php:
   - 7.0
   - 7.1
