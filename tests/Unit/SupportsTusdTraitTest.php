@@ -36,8 +36,13 @@ class SupportsTusdTraitTest extends AbstractTestCase
         static::startTusd();
 
         $this->assertNotNull(static::$tusProcess);
+        
+        // we wait a bit to let the executable start
+        // complete
+        sleep(1);
+        
         $this->assertTrue(static::$tusProcess->isRunning());
-
+        
         static::stopTusd();
         
         $this->assertFalse(static::$tusProcess->isRunning());

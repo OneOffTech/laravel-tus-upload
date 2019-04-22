@@ -14,6 +14,11 @@ specifies a flexible method to upload files to remote servers using HTTP.
 The special feature is the ability to pause and resume uploads at any
 moment allowing to continue seamlessly after e.g. network interruptions.
 
+It is capable of accepting uploads with arbitrary sizes and storing them locally
+on disk, on Google Cloud Storage or on AWS S3 (or any other S3-compatible
+storage system). Due to its modularization and extensibility, support for
+nearly any other cloud provider could easily be added to tusd.
+
 **Protocol version:** 1.0.0
 
 ## Getting started
@@ -26,23 +31,109 @@ Windows in various formats of the
 
 ### Compile from source
 
-**Requirements:**
-
-* [Go](http://golang.org/doc/install) (1.5 or newer)
-
-**Running tusd from source:**
-
-Clone the git repository and `cd` into it.
+The only requirement for building tusd is [Go](http://golang.org/doc/install) 1.5 or newer.
+If you meet this criteria, you can clone the git repository, install the remaining
+depedencies and build the binary:
 
 ```bash
 git clone git@github.com:tus/tusd.git
 cd tusd
+
+go get -u github.com/aws/aws-sdk-go/...
+go get -u github.com/prometheus/client_golang/prometheus
+
+go build -o tusd cmd/tusd/main.go
 ```
 
-Now you can run tusd:
+## Running tusd
 
-```bash
-go run cmd/tusd/main.go
+Start the tusd upload server is as simple as invoking a single command. For example, following
+snippet demostrates how to start a tusd process which accepts tus uploads at
+`http://localhost:1080/files/` and stores them locally in the `./data` directory:
+
+```
+$ tusd -dir ./data
+[tusd] Using './data' as directory storage.
+[tusd] Using 0.00MB as maximum size.
+[tusd] Using 0.0.0.0:1080 as address to listen.
+[tusd] Using /files/ as the base path.
+[tusd] Using /metrics as the metrics path.
+```
+
+Alternatively, if you want to store the uploads on an AWS S3 bucket, you only have to specify
+the bucket and provide the corresponding access credentials and region information using
+environment variables (if you want to use a S3-compatible store, use can use the `-s3-endpoint`
+option):
+
+```
+$ export AWS_ACCESS_KEY_ID=xxxxx
+$ export AWS_SECRET_ACCESS_KEY=xxxxx
+$ export AWS_REGION=eu-west-1
+$ tusd -s3-bucket my-test-bucket.com
+[tusd] Using 's3://my-test-bucket.com' as S3 bucket for storage.
+[tusd] Using 0.00MB as maximum size.
+[tusd] Using 0.0.0.0:1080 as address to listen.
+[tusd] Using /files/ as the base path.
+[tusd] Using /metrics as the metrics path.
+```
+
+tusd is also able to read the credentials automatically from a shared credentials file (~/.aws/credentials) as described in https://github.com/aws/aws-sdk-go#configuring-credentials.
+
+Furthermore, tusd also has support for storing uploads on Google Cloud Storage. In order to
+enable this feature, supply the path to your account file containing the necessary credentials:
+
+```
+$ export GCS_SERVICE_ACCOUNT_FILE=./account.json
+$ tusd -gcs-bucket my-test-bucket.com
+[tusd] Using 'gcs://my-test-bucket.com' as GCS bucket for storage.
+[tusd] Using 0.00MB as maximum size.
+[tusd] Using 0.0.0.0:1080 as address to listen.
+[tusd] Using /files/ as the base path.
+[tusd] Using /metrics as the metrics path.
+```
+
+Besides these simple examples, tusd can be easily configured using a variety of command line
+options:
+
+```
+$ tusd -help
+Usage of tusd:
+  -base-path string
+    	Basepath of the HTTP server (default "/files/")
+  -behind-proxy
+    	Respect X-Forwarded-* and similar headers which may be set by proxies
+  -dir string
+    	Directory to store uploads in (default "./data")
+  -expose-metrics
+    	Expose metrics about tusd usage (default true)
+  -gcs-bucket string
+    	Use Google Cloud Storage with this bucket as storage backend (requires the GCS_SERVICE_ACCOUNT_FILE environment variable to be set)
+  -hooks-dir string
+    	Directory to search for available hooks scripts
+  -hooks-http string
+    	An HTTP endpoint to which hook events will be sent to
+  -hooks-http-backoff int
+    	Number of seconds to wait before retrying each retry (default 1)
+  -hooks-http-retry int
+    	Number of times to retry on a 500 or network timeout (default 3)
+  -host string
+    	Host to bind HTTP server to (default "0.0.0.0")
+  -max-size int
+    	Maximum size of a single upload in bytes
+  -metrics-path string
+    	Path under which the metrics endpoint will be accessible (default "/metrics")
+  -port string
+    	Port to bind HTTP server to (default "1080")
+  -s3-bucket string
+    	Use AWS S3 with this bucket as storage backend (requires the AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY and AWS_REGION environment variables to be set)
+  -s3-endpoint string
+    	Endpoint to use S3 compatible implementations like minio (requires s3-bucket to be pass)
+  -store-size int
+    	Size of space allowed for storage
+  -timeout int
+    	Read timeout for connections in milliseconds.  A zero value means that reads will not timeout (default 30000)
+  -version
+    	Print tusd version information
 ```
 
 ## Using tusd manually
@@ -128,6 +219,7 @@ useful tools:
 * [**gcsstore**](https://godoc.org/github.com/tus/tusd/gcsstore): A storage backend using Google cloud storage
 * [**memorylocker**](https://godoc.org/github.com/tus/tusd/memorylocker): An in-memory locker for handling concurrent uploads
 * [**consullocker**](https://godoc.org/github.com/tus/tusd/consullocker): A locker using the distributed Consul service
+* [**etcd3locker**](https://godoc.org/github.com/tus/tusd/etcd3locker): A locker using the distributed KV etcd3 store
 * [**limitedstore**](https://godoc.org/github.com/tus/tusd/limitedstore): A storage wrapper limiting the total used space for uploads
 
 ## Running the testsuite
@@ -143,7 +235,7 @@ go test -v ./...
 
 ### How can I access tusd using HTTPS?
 
-The tusd binary, once executed, listens on the provided port for only non-encrypted HTTP requests and *does not accept* HTTPS connections. This decision has been made to limit the functionality inside this repository which has to be developed, tested and maintained. If you want to send requests to tusd in a secure fashion - what we absolutely encourage, we recommend you to utilize a reverse proxy in front of tusd which accepts incoming HTTPS connections and forwards them to tusd using plain HTTP. More information about this topic, including sample configurations for Nginx and Apache, can be found in [issue #86](https://github.com/tus/tusd/issues/86#issuecomment-269569077) and in the [Apache example configuration](.infra/files/apache2.conf).
+The tusd binary, once executed, listens on the provided port for only non-encrypted HTTP requests and *does not accept* HTTPS connections. This decision has been made to limit the functionality inside this repository which has to be developed, tested and maintained. If you want to send requests to tusd in a secure fashion - what we absolutely encourage, we recommend you to utilize a reverse proxy in front of tusd which accepts incoming HTTPS connections and forwards them to tusd using plain HTTP. More information about this topic, including sample configurations for Nginx and Apache, can be found in [issue #86](https://github.com/tus/tusd/issues/86#issuecomment-269569077) and in the [Apache example configuration](/docs/apache2.conf).
 
 ### Can I run tusd behind a reverse proxy?
 
@@ -155,12 +247,19 @@ Yes, it is absolutely possible to do so. Firstly, you should execute the tusd bi
 
 - *Forward hostname and scheme.* If the proxy rewrites the request URL, the tusd server does not know the original URL which was used to reach the proxy. This behavior can lead to situations, where tusd returns a redirect to a URL which can not be reached by the client. To avoid this confusion, you can explicitly tell tusd which hostname and scheme to use by supplying the `X-Forwarded-Host` and `X-Forwarded-Proto` headers.
 
-Explicit examples for the above points can be found in the [Nginx configuration](https://github.com/tus/tusd/blob/master/.infra/files/nginx.conf) which is used to power the [master.tus.io](https://master.tus.io) instace.
+Explicit examples for the above points can be found in the [Nginx configuration](/docs/nginx.conf) which is used to power the [master.tus.io](https://master.tus.io) instace.
 
 ### Can I run custom verification/authentication checks before an upload begins?
 
 Yes, this is made possible by the [hook system](/docs/hooks.md) inside the tusd binary. It enables custom routines to be executed when certain events occurs, such as a new upload being created which can be handled by the `pre-create` hook. Inside the corresponding hook file, you can run your own validations against the provided upload metadata to determine whether the action is actually allowed or should be rejected by tusd. Please have a look at the [corresponding documentation](docs/hooks.md#pre-create) for a more detailed explanation.
 
+### Can I run tusd inside a VM/Vagrant/VirtualBox?
+
+Yes, you can absolutely do so without any modifications. However, there is one known problem: If you are using tusd inside VirtualBox (the default provider for Vagrant) and are storing the files inside a shared/synced folder, you might get TemporaryErrors (Lockfile created, but doesn't exist) when trying to upload. This happens because shared folders do not support symbolic links which are necessary for tusd. Please use another non-shared folder for storing files (see https://github.com/tus/tusd/issues/201).
+
+### I am getting TemporaryErrors (Lockfile created, but doesn't exist)! What can I do?
+
+This error should only occur when you are using tusd inside VirtualBox. Please see the answer above for more details on when this can happen and how to avoid it.
 
 ## License
 
