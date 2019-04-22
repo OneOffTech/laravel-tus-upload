@@ -59,7 +59,7 @@ trait SupportsTusd
     public static function stopTusd()
     {
         if (static::$tusProcess) {
-            static::$tusProcess->stop();
+            static::$tusProcess->stop(0);
         }
     }
 
@@ -78,16 +78,9 @@ trait SupportsTusd
         if (is_bool($driver) || realpath($driver) === false) {
             throw new RuntimeException("Invalid path to tusd [{$driver}, {$path}].");
         }
-
-        // $builder = (new ProcessBuilder())
-        //         ->setPrefix();
-
                 
         $tus_arguments = static::tusdArguments();
-        
-        // foreach ($arguments as $argument) {
-        //     $builder->add($argument);
-        // }
+
         $arguments = array_merge([realpath($driver)], $tus_arguments);
 
         return new Process($arguments);
