@@ -1,19 +1,31 @@
 var TusUploader = (function () {
 	'use strict';
 
-	var commonjsGlobal = typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
+	var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
 	function commonjsRequire () {
 		throw new Error('Dynamic requires are not currently supported by rollup-plugin-commonjs');
 	}
 
 	function unwrapExports (x) {
-		return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, 'default') ? x.default : x;
+		return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, 'default') ? x['default'] : x;
 	}
 
 	function createCommonjsModule(fn, module) {
 		return module = { exports: {} }, fn(module, module.exports), module.exports;
 	}
+
+	function getCjsExportFromNamespace (n) {
+		return n && n['default'] || n;
+	}
+
+	var commonjsHelpers = /*#__PURE__*/Object.freeze({
+		commonjsGlobal: commonjsGlobal,
+		commonjsRequire: commonjsRequire,
+		unwrapExports: unwrapExports,
+		createCommonjsModule: createCommonjsModule,
+		getCjsExportFromNamespace: getCjsExportFromNamespace
+	});
 
 	var tus = createCommonjsModule(function (module, exports) {
 	(function(f){{module.exports=f();}})(function(){return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof commonjsRequire=="function"&&commonjsRequire;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r);}return n[o].exports}var i=typeof commonjsRequire=="function"&&commonjsRequire;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
@@ -76,19 +88,18 @@ var TusUploader = (function () {
 	function newRequest() {
 	  return new window.XMLHttpRequest();
 	} /* global window */
-
-
 	function resolveUrl(origin, link) {
 	  return new _urlParse2.default(link, origin).toString();
 	}
 
 	},{"url-parse":16}],5:[function(_dereq_,module,exports){
 
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
 	exports.getSource = getSource;
 
 	var _isReactNative = _dereq_("./isReactNative");
@@ -173,12 +184,12 @@ var TusUploader = (function () {
 	      var hasEnoughData = end <= this._bufferOffset + len(this._buffer);
 	      if (this._done || hasEnoughData) {
 	        var value = this._getDataFromBuffer(start, end);
-	        callback(null, value);
+	        callback(null, value, value == null ? this._done : false);
 	        return;
 	      }
 	      this._reader.read().then(function (_ref) {
-	        var value = _ref.value;
-	        var done = _ref.done;
+	        var value = _ref.value,
+	            done = _ref.done;
 
 	        if (done) {
 	          _this._done = true;
@@ -381,12 +392,12 @@ var TusUploader = (function () {
 	  _inherits(DetailedError, _Error);
 
 	  function DetailedError(error) {
-	    var causingErr = arguments.length <= 1 || arguments[1] === undefined ? null : arguments[1];
-	    var xhr = arguments.length <= 2 || arguments[2] === undefined ? null : arguments[2];
+	    var causingErr = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+	    var xhr = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
 
 	    _classCallCheck(this, DetailedError);
 
-	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(DetailedError).call(this, error.message));
+	    var _this = _possibleConstructorReturn(this, (DetailedError.__proto__ || Object.getPrototypeOf(DetailedError)).call(this, error.message));
 
 	    _this.originalRequest = xhr;
 	    _this.causingError = causingErr;
@@ -440,9 +451,9 @@ var TusUploader = (function () {
 
 	if (typeof window !== "undefined") {
 	  // Browser environment using XMLHttpRequest
-	  var _window = window;
-	  var XMLHttpRequest = _window.XMLHttpRequest;
-	  var Blob = _window.Blob;
+	  var _window = window,
+	      XMLHttpRequest = _window.XMLHttpRequest,
+	      Blob = _window.Blob;
 
 
 	  isSupported = XMLHttpRequest && Blob && typeof Blob.prototype.slice === "function";
@@ -463,16 +474,16 @@ var TusUploader = (function () {
 
 	},{"./node/storage":6,"./upload":11}],11:[function(_dereq_,module,exports){
 
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /* global window */
 
 
 	// We import the files used inside the Node environment which are rewritten
 	// for browsers using the rules defined in the package.json
 
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
 
 	var _fingerprint = _dereq_("./fingerprint");
 
@@ -626,47 +637,47 @@ var TusUploader = (function () {
 	          this._emitError(new Error("tus: the `retryDelays` option must either be an array or null"));
 	          return;
 	        } else {
-	          (function () {
-	            var errorCallback = _this2.options.onError;
-	            _this2.options.onError = function (err) {
-	              // Restore the original error callback which may have been set.
-	              _this2.options.onError = errorCallback;
+	          var errorCallback = this.options.onError;
+	          this.options.onError = function (err) {
+	            // Restore the original error callback which may have been set.
+	            _this2.options.onError = errorCallback;
 
-	              // We will reset the attempt counter if
-	              // - we were already able to connect to the server (offset != null) and
-	              // - we were able to upload a small chunk of data to the server
-	              var shouldResetDelays = _this2._offset != null && _this2._offset > _this2._offsetBeforeRetry;
-	              if (shouldResetDelays) {
-	                _this2._retryAttempt = 0;
-	              }
+	            // We will reset the attempt counter if
+	            // - we were already able to connect to the server (offset != null) and
+	            // - we were able to upload a small chunk of data to the server
+	            var shouldResetDelays = _this2._offset != null && _this2._offset > _this2._offsetBeforeRetry;
+	            if (shouldResetDelays) {
+	              _this2._retryAttempt = 0;
+	            }
 
-	              var isOnline = true;
-	              if (typeof window !== "undefined" && "navigator" in window && window.navigator.onLine === false) {
-	                isOnline = false;
-	              }
+	            var isOnline = true;
+	            if (typeof window !== "undefined" && "navigator" in window && window.navigator.onLine === false) {
+	              isOnline = false;
+	            }
 
-	              // We only attempt a retry if
-	              // - we didn't exceed the maxium number of retries, yet, and
-	              // - this error was caused by a request or it's response and
-	              // - the error is not a client error (status 4xx) and
-	              // - the browser does not indicate that we are offline
-	              var shouldRetry = _this2._retryAttempt < retryDelays.length && err.originalRequest != null && !inStatusCategory(err.originalRequest.status, 400) && isOnline;
+	            // We only attempt a retry if
+	            // - we didn't exceed the maxium number of retries, yet, and
+	            // - this error was caused by a request or it's response and
+	            // - the error is server error (i.e. no a status 4xx or a 409 or 423) and
+	            // - the browser does not indicate that we are offline
+	            var status = err.originalRequest ? err.originalRequest.status : 0;
+	            var isServerError = !inStatusCategory(status, 400) || status === 409 || status === 423;
+	            var shouldRetry = _this2._retryAttempt < retryDelays.length && err.originalRequest != null && isServerError && isOnline;
 
-	              if (!shouldRetry) {
-	                _this2._emitError(err);
-	                return;
-	              }
+	            if (!shouldRetry) {
+	              _this2._emitError(err);
+	              return;
+	            }
 
-	              var delay = retryDelays[_this2._retryAttempt++];
+	            var delay = retryDelays[_this2._retryAttempt++];
 
-	              _this2._offsetBeforeRetry = _this2._offset;
-	              _this2.options.uploadUrl = _this2.url;
+	            _this2._offsetBeforeRetry = _this2._offset;
+	            _this2.options.uploadUrl = _this2.url;
 
-	              _this2._retryTimeout = setTimeout(function () {
-	                _this2.start();
-	              }, delay);
-	            };
-	          })();
+	            _this2._retryTimeout = setTimeout(function () {
+	              _this2.start();
+	            }, delay);
+	          };
 	        }
 	      }
 
@@ -1042,33 +1053,26 @@ var TusUploader = (function () {
 	        end = this._size;
 	      }
 
-	      // A source's slice may return a value to send or a promise.
-	      // When we have the value we start to send it and emit progress.
-	      // TODO: merge these two branches
-	      if (this.options.uploadLengthDeferred) {
-	        this._source.slice(start, end, function (error, value) {
-	          if (error) {
-	            _this5._emitError(error);
-	          } else if (value === null) {
-	            _this5._size = _this5._offset;
-	            xhr.setRequestHeader("Upload-Length", _this5._offset);
-	            xhr.send();
-	          } else {
-	            xhr.send(value);
-	            _this5._emitProgress(_this5._offset, _this5._size);
-	          }
-	        });
-	      } else {
-	        this._source.slice(start, end, function (error, chunk) {
-	          if (error) {
-	            _this5._emitError(new _error2.default("tus: could not slice file or stream (from " + start + " to " + end + ")", error));
-	            return;
-	          }
+	      this._source.slice(start, end, function (err, value, complete) {
+	        if (err) {
+	          _this5._emitError(err);
+	          return;
+	        }
 
-	          xhr.send(chunk);
-	        });
-	        this._emitProgress(this._offset, this._size);
-	      }
+	        if (_this5.options.uploadLengthDeferred) {
+	          if (complete) {
+	            _this5._size = _this5._offset + (value && value.size ? value.size : 0);
+	            xhr.setRequestHeader("Upload-Length", _this5._size);
+	          }
+	        }
+
+	        if (value === null) {
+	          xhr.send();
+	        } else {
+	          xhr.send(value);
+	          _this5._emitProgress(_this5._offset, _this5._size);
+	        }
+	      });
 	    }
 	  }]);
 
