@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/OneOffTech/laravel-tus-upload.svg?branch=master)](https://travis-ci.org/OneOffTech/laravel-tus-upload)
+[![Build Status](https://travis-ci.com/OneOffTech/laravel-tus-upload.svg?branch=master)](https://travis-ci.com/OneOffTech/laravel-tus-upload)
 
 # Laravel [Tus](http://tus.io/) based Upload
 
