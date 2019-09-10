@@ -6,7 +6,7 @@ module.exports = {
     "extends": "eslint:recommended",
     "parserOptions": {
         "sourceType": "module",
-        "ecmaVersion": 5
+        "ecmaVersion": 6
     },
     "globals" : {
         "require": true
