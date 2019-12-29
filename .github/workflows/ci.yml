@@ -1,0 +1,38 @@
+name: CI
+
+on: 
+  push:
+    branches: 
+      - "master"
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  phpunit:
+    name: Test on laravel ${{ matrix.laravel }}
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        laravel: ["5.7", "5.8", "6.0" , "6.*"]
+
+    container:
+      image: jackmdavis97/php:7.3
+    
+    steps:
+    - uses: actions/checkout@v1
+      with:
+        fetch-depth: 1
+    - name: Set Laravel version
+      run: |
+        composer require "illuminate/auth:${{ matrix.laravel }}" --no-update
+        composer require "illuminate/console:${{ matrix.laravel }}" --no-update
+        composer require "illuminate/contracts:${{ matrix.laravel }}" --no-update
+        composer require "illuminate/database:${{ matrix.laravel }}" --no-update
+        composer require "illuminate/events:${{ matrix.laravel }}" --no-update
+        composer require "illuminate/support:${{ matrix.laravel }}" --no-update
+        composer require "illuminate/view:${{ matrix.laravel }}" --no-update
+    - name: Composer update
+      run: composer update --no-interaction --no-progress --no-suggest --prefer-dist
+    - name: Run Testsuite
+      run: ./vendor/bin/phpunit
