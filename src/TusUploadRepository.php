@@ -8,6 +8,7 @@ use OneOffTech\TusUpload\Events\TusUploadProgress;
 use OneOffTech\TusUpload\Events\TusUploadCompleted;
 use OneOffTech\TusUpload\Events\TusUploadCancelled;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 use Carbon\Carbon;
 
 class TusUploadRepository
@@ -98,7 +99,7 @@ class TusUploadRepository
             'offset' => $offset,
             'mimetype' => $mimeType,
             'metadata' => $metadata,
-            'upload_token' => str_random(60 - strlen($requestId)) . $requestId,
+            'upload_token' => Str::random(60 - strlen($requestId)) . $requestId,
             'upload_token_expires_at' => Carbon::now()->addHour(),
         ]);
 

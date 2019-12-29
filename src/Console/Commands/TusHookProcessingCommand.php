@@ -7,6 +7,7 @@ use OneOffTech\TusUpload\TusUploadRepository;
 use OneOffTech\TusUpload\Concerns\ProcessHooks;
 use OneOffTech\TusUpload\Console\TusHookInput;
 use OneOffTech\TusUpload\Contracts\AuthenticationResolver;
+use Illuminate\Support\Str;
 use Log;
 use Exception;
 
@@ -72,7 +73,7 @@ class TusHookProcessingCommand extends Command
             throw new Exception('Invalid payload');
         }
 
-        $done = $this->{camel_case($hook)}($payload);
+        $done = $this->{Str::camel($hook)}($payload);
 
         return $done ? 0 : 1;
     }

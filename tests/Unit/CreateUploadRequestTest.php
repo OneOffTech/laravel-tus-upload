@@ -5,6 +5,7 @@ namespace Tests\Unit;
 use Tests\AbstractTestCase;
 use Tests\FakeUser;
 use OneOffTech\TusUpload\Http\Requests\CreateUploadRequest;
+use Illuminate\Support\Str;
 use Mockery;
 use Illuminate\Contracts\Auth\Access\Gate;
 
@@ -14,7 +15,7 @@ class CreateUploadRequestTest extends AbstractTestCase
     /** @test */
     public function request_authorize_calls_the_gate()
     {
-        $requestId = str_random(60);
+        $requestId = Str::random(60);
         $args = ['id' => $requestId, 'filename' => 'test.pdf', 'filesize' => 5];
 
         $user = new FakeUser();

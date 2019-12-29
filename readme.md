@@ -20,19 +20,13 @@ This package contains a PHP component for controlling the Tus upload server and 
 
 To get started, install Laravel Tus Upload via the [Composer](http://getcomposer.org/) package manager.
 
-> If you require Laravel 5.4 support, use version `0.3` of the package
+> Requires PHP 7.1
 
 ```bash
 composer require oneofftech/laravel-tus-upload
 ```
 
-Next, register the TusUpload Service Provider in the providers array of your `config/app.php` configuration file:
-
-```php
-OneOffTech\TusUpload\Providers\TusUploadServiceProvider::class,
-```
-
-> Laravel 5.5 should not require this step, as the package should auto-register the service provider
+The `OneOffTech\TusUpload\Providers\TusUploadServiceProvider::class` service provider is auto-registered.
 
 **Routes registration**
 

@@ -14,6 +14,8 @@ use OneOffTech\TusUpload\Events\TusUploadProgress;
 use OneOffTech\TusUpload\Events\TusUploadCompleted;
 use OneOffTech\TusUpload\Events\TusUploadCancelled;
 use OneOffTech\TusUpload\Http\Requests\CreateUploadRequest;
+use Illuminate\Support\Str;
+use Illuminate\Support\Arr;
 use Mockery;
 
 class TusUploadQueueControllerTest extends AbstractTestCase
@@ -27,7 +29,7 @@ class TusUploadQueueControllerTest extends AbstractTestCase
         
         $controller = app(TusUploadQueueController::class);
 
-        $requestId = str_random(60);
+        $requestId = Str::random(60);
         $args = ['id' => $requestId, 'filename' => 'test.pdf', 'filesize' => 5];
 
         $base_request = CreateUploadRequest::createFromBase(\Symfony\Component\HttpFoundation\Request::create('/uploadqueue', 'POST', $args));
@@ -55,7 +57,7 @@ class TusUploadQueueControllerTest extends AbstractTestCase
         
         $controller = app(TusUploadQueueController::class);
 
-        $requestId = str_random(60);
+        $requestId = Str::random(60);
         $args = ['id' => $requestId, 'filename' => 'test.pdf', 'filesize' => 5, 'collection' => 5, 'filetype' => 'application/pdf'];
 
         $base_request = CreateUploadRequest::createFromBase(\Symfony\Component\HttpFoundation\Request::create('/uploadqueue', 'POST', $args));
@@ -87,10 +89,10 @@ class TusUploadQueueControllerTest extends AbstractTestCase
 
         $upload = (new TusUpload)->forceFill([
             'user_id' => 1,
-            'request_id' => str_random(60),
+            'request_id' => Str::random(60),
             'filename' => 'test.pdf',
             'size' => 100,
-            'upload_token' => str_random(60),
+            'upload_token' => Str::random(60),
             'upload_token_expires_at' => \Carbon\Carbon::now()->addHour()
         ]);
 
@@ -107,7 +109,7 @@ class TusUploadQueueControllerTest extends AbstractTestCase
 
         $this->assertInstanceOf(\Illuminate\Http\JsonResponse::class, $response);
 
-        $this->assertEquals(json_encode(array_wrap($upload)), $response->getContent());
+        $this->assertEquals(json_encode(Arr::wrap($upload)), $response->getContent());
     }
 
     /** @test */
@@ -121,12 +123,12 @@ class TusUploadQueueControllerTest extends AbstractTestCase
 
         $upload = (new TusUpload)->forceFill([
             'user_id' => 1,
-            'request_id' => str_random(60),
+            'request_id' => Str::random(60),
             'filename' => 'test.pdf',
             'size' => 100,
             'cancelled' => false,
             'completed' => false,
-            'upload_token' => str_random(60),
+            'upload_token' => Str::random(60),
             'upload_token_expires_at' => \Carbon\Carbon::now()->addHour()
         ]);
 

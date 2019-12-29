@@ -11,6 +11,7 @@ use OneOffTech\TusUpload\Events\TusUploadStarted;
 use OneOffTech\TusUpload\Events\TusUploadProgress;
 use OneOffTech\TusUpload\Events\TusUploadCompleted;
 use OneOffTech\TusUpload\Events\TusUploadCancelled;
+use Illuminate\Support\Str;
 
 class TusUploadRepositoryTest extends AbstractTestCase
 {
@@ -23,7 +24,7 @@ class TusUploadRepositoryTest extends AbstractTestCase
 
         $repository = app('OneOffTech\TusUpload\TusUploadRepository');
 
-        $requestID = str_random(60);
+        $requestID = Str::random(60);
 
         $upload = $repository->create(1, $requestID, 'test.pdf', 100);
 
@@ -48,10 +49,10 @@ class TusUploadRepositoryTest extends AbstractTestCase
 
         $upload = (new TusUpload)->forceFill([
             'user_id' => 1,
-            'request_id' => str_random(60),
+            'request_id' => Str::random(60),
             'filename' => 'test.pdf',
             'size' => 100,
-            'upload_token' => str_random(60),
+            'upload_token' => Str::random(60),
             'upload_token_expires_at' => \Carbon\Carbon::now()->addHour()
         ]);
 
@@ -78,17 +79,17 @@ class TusUploadRepositoryTest extends AbstractTestCase
 
         $upload = (new TusUpload)->forceFill([
             'user_id' => 1,
-            'request_id' => str_random(60),
+            'request_id' => Str::random(60),
             'filename' => 'test.pdf',
             'size' => 100,
             'completed' => true,
-            'upload_token' => str_random(60),
+            'upload_token' => Str::random(60),
             'upload_token_expires_at' => \Carbon\Carbon::now()->addHour()
         ]);
 
         $upload->save();
 
-        $upload = $repository->updateTusId($upload, str_random(60));
+        $upload = $repository->updateTusId($upload, Str::random(60));
         $upload = $repository->updateProgress($upload, 25);
 
         Event::assertNotDispatched(TusUploadProgress::class);
@@ -103,11 +104,11 @@ class TusUploadRepositoryTest extends AbstractTestCase
 
         $upload = (new TusUpload)->forceFill([
             'user_id' => 1,
-            'request_id' => str_random(60),
+            'request_id' => Str::random(60),
             'filename' => 'test.pdf',
             'size' => 100,
             'cancelled' => true,
-            'upload_token' => str_random(60),
+            'upload_token' => Str::random(60),
             'upload_token_expires_at' => \Carbon\Carbon::now()->addHour()
         ]);
 
@@ -127,12 +128,12 @@ class TusUploadRepositoryTest extends AbstractTestCase
 
         $upload = (new TusUpload)->forceFill([
             'user_id' => 1,
-            'request_id' => str_random(60),
+            'request_id' => Str::random(60),
             'filename' => 'test.pdf',
             'size' => 100,
             'cancelled' => false,
             'completed' => false,
-            'upload_token' => str_random(60),
+            'upload_token' => Str::random(60),
             'upload_token_expires_at' => \Carbon\Carbon::now()->addHour()
         ]);
 
@@ -165,12 +166,12 @@ class TusUploadRepositoryTest extends AbstractTestCase
 
         $upload = (new TusUpload)->forceFill([
             'user_id' => 1,
-            'request_id' => str_random(60),
+            'request_id' => Str::random(60),
             'filename' => 'test.pdf',
             'size' => 100,
             'cancelled' => false,
             'completed' => false,
-            'upload_token' => str_random(60),
+            'upload_token' => Str::random(60),
             'upload_token_expires_at' => \Carbon\Carbon::now()->addHour()
         ]);
 

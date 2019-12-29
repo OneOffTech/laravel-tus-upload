@@ -6,6 +6,7 @@ use Tests\AbstractTestCase;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Str;
 use OneOffTech\TusUpload\TusUpload;
 use Carbon\Carbon;
 
@@ -17,7 +18,7 @@ class TusUploadTest extends AbstractTestCase
     public function tus_upload_file_path_is_returned_if_upload_is_started()
     {
 
-        $tusId = str_random(10);
+        $tusId = Str::random(10);
 
         $upload = (new TusUpload)->forceFill([
             'user_id' => 1,
@@ -28,7 +29,7 @@ class TusUploadTest extends AbstractTestCase
             'offset' => 10,
             'mimetype' => null,
             'metadata' => null,
-            'upload_token' => str_random(60),
+            'upload_token' => Str::random(60),
             'upload_token_expires_at' => Carbon::now()->addHour(),
         ]);
 
@@ -41,7 +42,7 @@ class TusUploadTest extends AbstractTestCase
     public function tus_upload_file_path_is_not_returned_when_upload_is_not_started()
     {
 
-        $tusId = str_random(10);
+        $tusId = Str::random(10);
 
         $upload = (new TusUpload)->forceFill([
             'user_id' => 1,
@@ -51,7 +52,7 @@ class TusUploadTest extends AbstractTestCase
             'offset' => 10,
             'mimetype' => null,
             'metadata' => null,
-            'upload_token' => str_random(60),
+            'upload_token' => Str::random(60),
             'upload_token_expires_at' => Carbon::now()->addHour(),
         ]);
 
@@ -64,7 +65,7 @@ class TusUploadTest extends AbstractTestCase
     public function tus_upload_started()
     {
 
-        $tusId = str_random(10);
+        $tusId = Str::random(10);
 
         $upload = (new TusUpload)->forceFill([
             'user_id' => 1,
@@ -74,7 +75,7 @@ class TusUploadTest extends AbstractTestCase
             'offset' => 10,
             'mimetype' => null,
             'metadata' => null,
-            'upload_token' => str_random(60),
+            'upload_token' => Str::random(60),
             'upload_token_expires_at' => Carbon::now()->addHour(),
         ]);
 
@@ -91,7 +92,7 @@ class TusUploadTest extends AbstractTestCase
             'offset' => 10,
             'mimetype' => null,
             'metadata' => null,
-            'upload_token' => str_random(60),
+            'upload_token' => Str::random(60),
             'upload_token_expires_at' => Carbon::now()->addHour(),
         ]);
 
@@ -106,7 +107,7 @@ class TusUploadTest extends AbstractTestCase
     public function tus_upload_metadata_is_stored_as_json()
     {
 
-        $tusId = str_random(10);
+        $tusId = Str::random(10);
 
         $metadata_original = ['key' => 'value'];
 
@@ -118,7 +119,7 @@ class TusUploadTest extends AbstractTestCase
             'offset' => 10,
             'mimetype' => null,
             'metadata' => $metadata_original,
-            'upload_token' => str_random(60),
+            'upload_token' => Str::random(60),
             'upload_token_expires_at' => Carbon::now()->addHour(),
         ]);
 
@@ -132,7 +133,7 @@ class TusUploadTest extends AbstractTestCase
     public function tus_upload_is_started()
     {
 
-        $tusId = str_random(10);
+        $tusId = Str::random(10);
 
         $upload = (new TusUpload)->forceFill([
             'user_id' => 1,
@@ -143,7 +144,7 @@ class TusUploadTest extends AbstractTestCase
             'offset' => 10,
             'mimetype' => null,
             'metadata' => null,
-            'upload_token' => str_random(60),
+            'upload_token' => Str::random(60),
             'upload_token_expires_at' => Carbon::now()->addHour(),
         ]);
 
@@ -157,7 +158,7 @@ class TusUploadTest extends AbstractTestCase
     public function tus_upload_is_cancelled()
     {
 
-        $tusId = str_random(10);
+        $tusId = Str::random(10);
 
         $upload = (new TusUpload)->forceFill([
             'user_id' => 1,
@@ -168,7 +169,7 @@ class TusUploadTest extends AbstractTestCase
             'offset' => 10,
             'mimetype' => null,
             'metadata' => null,
-            'upload_token' => str_random(60),
+            'upload_token' => Str::random(60),
             'upload_token_expires_at' => Carbon::now()->addHour(),
             'cancelled_at' => Carbon::now(),
         ]);
@@ -183,7 +184,7 @@ class TusUploadTest extends AbstractTestCase
     public function tus_upload_is_completed()
     {
 
-        $tusId = str_random(10);
+        $tusId = Str::random(10);
 
         $upload = (new TusUpload)->forceFill([
             'user_id' => 1,
@@ -194,7 +195,7 @@ class TusUploadTest extends AbstractTestCase
             'offset' => 10,
             'mimetype' => null,
             'metadata' => null,
-            'upload_token' => str_random(60),
+            'upload_token' => Str::random(60),
             'upload_token_expires_at' => Carbon::now()->addHour(),
             'completed_at' => Carbon::now(),
         ]);

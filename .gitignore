@@ -2,3 +2,4 @@
 /vendor
 npm-debug.log
 composer.lock
+.phpunit.result.cache
