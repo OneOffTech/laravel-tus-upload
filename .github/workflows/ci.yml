@@ -14,7 +14,7 @@ jobs:
 
     strategy:
       matrix:
-        laravel: ["5.7", "5.8", "6.0" , "6.*"]
+        laravel: ["5.8", "6.0" , "6.*"]
 
     container:
       image: jackmdavis97/php:7.3
