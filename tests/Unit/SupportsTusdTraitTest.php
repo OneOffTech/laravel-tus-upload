@@ -15,7 +15,7 @@ class SupportsTusdTraitTest extends AbstractTestCase
     /**
      * Setup the test environment.
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
 

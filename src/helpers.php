@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Str;
 
 if (! function_exists('tus_url')) {
     /**
@@ -21,6 +22,6 @@ if (! function_exists('tus_url')) {
             return $public_url;
         }
         
-        return (starts_with('https', url('/')) ? 'https://' : 'http://') . $host . ':' . $port . $base_path;
+        return (Str::startsWith('https', url('/')) ? 'https://' : 'http://') . $host . ':' . $port . $base_path;
     }
 }
