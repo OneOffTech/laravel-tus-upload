@@ -15,20 +15,55 @@ var TusUploader = (function () {
 		return module = { exports: {} }, fn(module, module.exports), module.exports;
 	}
 
-	function getCjsExportFromNamespace (n) {
-		return n && n['default'] || n;
-	}
-
-	var commonjsHelpers = /*#__PURE__*/Object.freeze({
-		commonjsGlobal: commonjsGlobal,
-		commonjsRequire: commonjsRequire,
-		unwrapExports: unwrapExports,
-		createCommonjsModule: createCommonjsModule,
-		getCjsExportFromNamespace: getCjsExportFromNamespace
-	});
-
 	var tus = createCommonjsModule(function (module, exports) {
 	(function(f){{module.exports=f();}})(function(){return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof commonjsRequire=="function"&&commonjsRequire;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r);}return n[o].exports}var i=typeof commonjsRequire=="function"&&commonjsRequire;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.default = fingerprint;
+
+	var _isReactNative = _dereq_("./isReactNative");
+
+	var _isReactNative2 = _interopRequireDefault(_isReactNative);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	/**
+	 * Generate a fingerprint for a file which will be used the store the endpoint
+	 *
+	 * @param {File} file
+	 * @param {Object} options
+	 * @param {Function} callback
+	 */
+	function fingerprint(file, options, callback) {
+	  if ((0, _isReactNative2.default)()) {
+	    return callback(null, reactNativeFingerprint(file, options));
+	  }
+
+	  return callback(null, ["tus-br", file.name, file.type, file.size, file.lastModified, options.endpoint].join("-"));
+	}
+
+	function reactNativeFingerprint(file, options) {
+	  var exifHash = file.exif ? hashCode(JSON.stringify(file.exif)) : "noexif";
+	  return ["tus-rn", file.name || "noname", file.size || "nosize", exifHash, options.endpoint].join("/");
+	}
+
+	function hashCode(str) {
+	  // from https://stackoverflow.com/a/8831937/151666
+	  var hash = 0;
+	  if (str.length === 0) {
+	    return hash;
+	  }
+	  for (var i = 0; i < str.length; i++) {
+	    var char = str.charCodeAt(i);
+	    hash = (hash << 5) - hash + char;
+	    hash = hash & hash; // Convert to 32bit integer
+	  }
+	  return hash;
+	}
+
+	},{"./isReactNative":3}],2:[function(_dereq_,module,exports){
 
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
@@ -39,16 +74,18 @@ var TusUploader = (function () {
 
 	exports.default = isCordova;
 
-	},{}],2:[function(_dereq_,module,exports){
+	},{}],3:[function(_dereq_,module,exports){
 
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	var isReactNative = typeof navigator !== "undefined" && typeof navigator.product === "string" && navigator.product.toLowerCase() === "reactnative";
+	var isReactNative = function isReactNative() {
+	  return typeof navigator !== "undefined" && typeof navigator.product === "string" && navigator.product.toLowerCase() === "reactnative";
+	};
 
 	exports.default = isReactNative;
 
-	},{}],3:[function(_dereq_,module,exports){
+	},{}],4:[function(_dereq_,module,exports){
 
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
@@ -71,7 +108,7 @@ var TusUploader = (function () {
 
 	exports.default = readAsByteArray;
 
-	},{}],4:[function(_dereq_,module,exports){
+	},{}],5:[function(_dereq_,module,exports){
 
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
@@ -92,7 +129,7 @@ var TusUploader = (function () {
 	  return new _urlParse2.default(link, origin).toString();
 	}
 
-	},{"url-parse":16}],5:[function(_dereq_,module,exports){
+	},{"url-parse":16}],6:[function(_dereq_,module,exports){
 
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
@@ -268,11 +305,7 @@ var TusUploader = (function () {
 	  // you usually get a file object {} with a uri property that contains
 	  // a local path to the file. We use XMLHttpRequest to fetch
 	  // the file blob, before uploading with tus.
-	  // TODO: The __tus__forceReactNative property is currently used to force
-	  // a React Native environment during testing. This should be removed
-	  // once we move away from PhantomJS and can overwrite navigator.product
-	  // properly.
-	  if ((_isReactNative2.default || window.__tus__forceReactNative) && input && typeof input.uri !== "undefined") {
+	  if ((0, _isReactNative2.default)() && input && typeof input.uri !== "undefined") {
 	    (0, _uriToBlob2.default)(input.uri, function (err, blob) {
 	      if (err) {
 	        return callback(new Error("tus: cannot fetch `file.uri` as Blob, make sure the uri is correct and accessible. " + err));
@@ -304,14 +337,18 @@ var TusUploader = (function () {
 	  callback(new Error("source object may only be an instance of File, Blob, or Reader in this environment"));
 	}
 
-	},{"./isCordova":1,"./isReactNative":2,"./readAsByteArray":3,"./uriToBlob":7}],6:[function(_dereq_,module,exports){
+	},{"./isCordova":2,"./isReactNative":3,"./readAsByteArray":4,"./uriToBlob":8}],7:[function(_dereq_,module,exports){
 
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	exports.setItem = setItem;
-	exports.getItem = getItem;
-	exports.removeItem = removeItem;
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	exports.getStorage = getStorage;
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
 	/* global window, localStorage */
 
 	var hasStorage = false;
@@ -335,22 +372,36 @@ var TusUploader = (function () {
 
 	var canStoreURLs = exports.canStoreURLs = hasStorage;
 
-	function setItem(key, value) {
-	  if (!hasStorage) return;
-	  return localStorage.setItem(key, value);
+	var LocalStorage = function () {
+	  function LocalStorage() {
+	    _classCallCheck(this, LocalStorage);
+	  }
+
+	  _createClass(LocalStorage, [{
+	    key: "setItem",
+	    value: function setItem(key, value, cb) {
+	      cb(null, localStorage.setItem(key, value));
+	    }
+	  }, {
+	    key: "getItem",
+	    value: function getItem(key, cb) {
+	      cb(null, localStorage.getItem(key));
+	    }
+	  }, {
+	    key: "removeItem",
+	    value: function removeItem(key, cb) {
+	      cb(null, localStorage.removeItem(key));
+	    }
+	  }]);
+
+	  return LocalStorage;
+	}();
+
+	function getStorage() {
+	  return hasStorage ? new LocalStorage() : null;
 	}
 
-	function getItem(key) {
-	  if (!hasStorage) return;
-	  return localStorage.getItem(key);
-	}
-
-	function removeItem(key) {
-	  if (!hasStorage) return;
-	  return localStorage.removeItem(key);
-	}
-
-	},{}],7:[function(_dereq_,module,exports){
+	},{}],8:[function(_dereq_,module,exports){
 
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
@@ -376,7 +427,7 @@ var TusUploader = (function () {
 
 	exports.default = uriToBlob;
 
-	},{}],8:[function(_dereq_,module,exports){
+	},{}],9:[function(_dereq_,module,exports){
 
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
@@ -418,22 +469,6 @@ var TusUploader = (function () {
 
 	exports.default = DetailedError;
 
-	},{}],9:[function(_dereq_,module,exports){
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	exports.default = fingerprint;
-	/**
-	 * Generate a fingerprint for a file which will be used the store the endpoint
-	 *
-	 * @param {File} file
-	 * @return {String}
-	 */
-	function fingerprint(file, options) {
-	  return ["tus", file.name, file.type, file.size, file.lastModified, options.endpoint].join("-");
-	}
-
 	},{}],10:[function(_dereq_,module,exports){
 
 	var _upload = _dereq_("./upload");
@@ -442,12 +477,21 @@ var TusUploader = (function () {
 
 	var _storage = _dereq_("./node/storage");
 
+	var storage = _interopRequireWildcard(_storage);
+
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	/* global window */
 	var defaultOptions = _upload2.default.defaultOptions;
 
-	var isSupported = void 0;
+
+	var moduleExport = {
+	  Upload: _upload2.default,
+	  canStoreURLs: storage.canStoreURLs,
+	  defaultOptions: defaultOptions
+	};
 
 	if (typeof window !== "undefined") {
 	  // Browser environment using XMLHttpRequest
@@ -456,23 +500,20 @@ var TusUploader = (function () {
 	      Blob = _window.Blob;
 
 
-	  isSupported = XMLHttpRequest && Blob && typeof Blob.prototype.slice === "function";
+	  moduleExport.isSupported = XMLHttpRequest && Blob && typeof Blob.prototype.slice === "function";
 	} else {
 	  // Node.js environment using http module
-	  isSupported = true;
+	  moduleExport.isSupported = true;
+	  // make FileStorage module available as it will not be set by default.
+	  moduleExport.FileStorage = storage.FileStorage;
 	}
 
 	// The usage of the commonjs exporting syntax instead of the new ECMAScript
 	// one is actually inteded and prevents weird behaviour if we are trying to
 	// import this module in another module using Babel.
-	module.exports = {
-	  Upload: _upload2.default,
-	  isSupported: isSupported,
-	  canStoreURLs: _storage.canStoreURLs,
-	  defaultOptions: defaultOptions
-	};
+	module.exports = moduleExport;
 
-	},{"./node/storage":6,"./upload":11}],11:[function(_dereq_,module,exports){
+	},{"./node/storage":7,"./upload":11}],11:[function(_dereq_,module,exports){
 
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
@@ -484,10 +525,6 @@ var TusUploader = (function () {
 	// We import the files used inside the Node environment which are rewritten
 	// for browsers using the rules defined in the package.json
 
-
-	var _fingerprint = _dereq_("./fingerprint");
-
-	var _fingerprint2 = _interopRequireDefault(_fingerprint);
 
 	var _error = _dereq_("./error");
 
@@ -505,9 +542,9 @@ var TusUploader = (function () {
 
 	var _storage = _dereq_("./node/storage");
 
-	var Storage = _interopRequireWildcard(_storage);
+	var _fingerprint = _dereq_("./node/fingerprint");
 
-	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+	var _fingerprint2 = _interopRequireDefault(_fingerprint);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -529,7 +566,10 @@ var TusUploader = (function () {
 	  overridePatchMethod: false,
 	  retryDelays: null,
 	  removeFingerprintOnSuccess: false,
-	  uploadLengthDeferred: false
+	  uploadLengthDeferred: false,
+	  urlStorage: null,
+	  fileReader: null,
+	  uploadDataDuringCreation: false
 	};
 
 	var Upload = function () {
@@ -537,6 +577,9 @@ var TusUploader = (function () {
 	    _classCallCheck(this, Upload);
 
 	    this.options = (0, _extend2.default)(true, {}, defaultOptions, options);
+
+	    // The storage module used to store URLs
+	    this._storage = this.options.urlStorage;
 
 	    // The underlying File/Blob object
 	    this.file = file;
@@ -591,10 +634,15 @@ var TusUploader = (function () {
 	        return;
 	      }
 
+	      if (this.options.resume && this._storage == null) {
+	        this._storage = (0, _storage.getStorage)();
+	      }
+
 	      if (this._source) {
 	        this._start(this._source);
 	      } else {
-	        (0, _source.getSource)(file, this.options.chunkSize, function (err, source) {
+	        var fileReader = this.options.fileReader || _source.getSource;
+	        fileReader(file, this.options.chunkSize, function (err, source) {
 	          if (err) {
 	            _this._emitError(err);
 	            return;
@@ -700,33 +748,66 @@ var TusUploader = (function () {
 	      }
 
 	      // Try to find the endpoint for the file in the storage
-	      if (this.options.resume) {
-	        this._fingerprint = this.options.fingerprint(file, this.options);
-	        var resumedUrl = Storage.getItem(this._fingerprint);
+	      if (this._hasStorage()) {
+	        this.options.fingerprint(file, this.options, function (err, fingerprintValue) {
+	          if (err) {
+	            _this2._emitError(err);
+	            return;
+	          }
 
-	        if (resumedUrl != null) {
-	          this.url = resumedUrl;
-	          this._resumeUpload();
-	          return;
-	        }
+	          _this2._fingerprint = fingerprintValue;
+	          _this2._storage.getItem(_this2._fingerprint, function (err, resumedUrl) {
+	            if (err) {
+	              _this2._emitError(err);
+	              return;
+	            }
+
+	            if (resumedUrl != null) {
+	              _this2.url = resumedUrl;
+	              _this2._resumeUpload();
+	            } else {
+	              _this2._createUpload();
+	            }
+	          });
+	        });
+	      } else {
+	        // An upload has not started for the file yet, so we start a new one
+	        this._createUpload();
 	      }
-
-	      // An upload has not started for the file yet, so we start a new one
-	      this._createUpload();
 	    }
 	  }, {
 	    key: "abort",
-	    value: function abort() {
+	    value: function abort(shouldTerminate, cb) {
+	      var _this3 = this;
+
 	      if (this._xhr !== null) {
 	        this._xhr.abort();
 	        this._source.close();
-	        this._aborted = true;
 	      }
+	      this._aborted = true;
 
 	      if (this._retryTimeout != null) {
 	        clearTimeout(this._retryTimeout);
 	        this._retryTimeout = null;
 	      }
+
+	      cb = cb || function () {};
+	      if (shouldTerminate) {
+	        Upload.terminate(this.url, this.options, function (err, xhr) {
+	          if (err) {
+	            return cb(err, xhr);
+	          }
+
+	          _this3._hasStorage() ? _this3._storage.removeItem(_this3._fingerprint, cb) : cb();
+	        });
+	      } else {
+	        cb();
+	      }
+	    }
+	  }, {
+	    key: "_hasStorage",
+	    value: function _hasStorage() {
+	      return this.options.resume && this._storage;
 	    }
 	  }, {
 	    key: "_emitXhrError",
@@ -794,15 +875,7 @@ var TusUploader = (function () {
 	    key: "_setupXHR",
 	    value: function _setupXHR(xhr) {
 	      this._xhr = xhr;
-
-	      xhr.setRequestHeader("Tus-Resumable", "1.0.0");
-	      var headers = this.options.headers;
-
-	      for (var name in headers) {
-	        xhr.setRequestHeader(name, headers[name]);
-	      }
-
-	      xhr.withCredentials = this.options.withCredentials;
+	      setupXHR(xhr, this.options);
 	    }
 
 	    /**
@@ -816,7 +889,7 @@ var TusUploader = (function () {
 	  }, {
 	    key: "_createUpload",
 	    value: function _createUpload() {
-	      var _this3 = this;
+	      var _this4 = this;
 
 	      if (!this.options.endpoint) {
 	        this._emitError(new Error("tus: unable to create upload because no endpoint is provided"));
@@ -828,35 +901,43 @@ var TusUploader = (function () {
 
 	      xhr.onload = function () {
 	        if (!inStatusCategory(xhr.status, 200)) {
-	          _this3._emitXhrError(xhr, new Error("tus: unexpected response while creating upload"));
+	          _this4._emitXhrError(xhr, new Error("tus: unexpected response while creating upload"));
 	          return;
 	        }
 
 	        var location = xhr.getResponseHeader("Location");
 	        if (location == null) {
-	          _this3._emitXhrError(xhr, new Error("tus: invalid or missing Location header"));
+	          _this4._emitXhrError(xhr, new Error("tus: invalid or missing Location header"));
 	          return;
 	        }
 
-	        _this3.url = (0, _request.resolveUrl)(_this3.options.endpoint, location);
+	        _this4.url = (0, _request.resolveUrl)(_this4.options.endpoint, location);
 
-	        if (_this3._size === 0) {
+	        if (_this4._size === 0) {
 	          // Nothing to upload and file was successfully created
-	          _this3._emitSuccess();
-	          _this3._source.close();
+	          _this4._emitSuccess();
+	          _this4._source.close();
 	          return;
 	        }
 
-	        if (_this3.options.resume) {
-	          Storage.setItem(_this3._fingerprint, _this3.url);
+	        if (_this4._hasStorage()) {
+	          _this4._storage.setItem(_this4._fingerprint, _this4.url, function (err) {
+	            if (err) {
+	              _this4._emitError(err);
+	            }
+	          });
 	        }
 
-	        _this3._offset = 0;
-	        _this3._startUpload();
+	        if (_this4.options.uploadDataDuringCreation) {
+	          _this4._handleUploadResponse(xhr);
+	        } else {
+	          _this4._offset = 0;
+	          _this4._startUpload();
+	        }
 	      };
 
 	      xhr.onerror = function (err) {
-	        _this3._emitXhrError(xhr, new Error("tus: failed to create upload"), err);
+	        _this4._emitXhrError(xhr, new Error("tus: failed to create upload"), err);
 	      };
 
 	      this._setupXHR(xhr);
@@ -872,7 +953,12 @@ var TusUploader = (function () {
 	        xhr.setRequestHeader("Upload-Metadata", metadata);
 	      }
 
-	      xhr.send(null);
+	      if (this.options.uploadDataDuringCreation && !this.options.uploadLengthDeferred) {
+	        this._offset = 0;
+	        this._addChunkToRequest(xhr);
+	      } else {
+	        xhr.send(null);
+	      }
 	    }
 
 	    /*
@@ -886,17 +972,21 @@ var TusUploader = (function () {
 	  }, {
 	    key: "_resumeUpload",
 	    value: function _resumeUpload() {
-	      var _this4 = this;
+	      var _this5 = this;
 
 	      var xhr = (0, _request.newRequest)();
 	      xhr.open("HEAD", this.url, true);
 
 	      xhr.onload = function () {
 	        if (!inStatusCategory(xhr.status, 200)) {
-	          if (_this4.options.resume && inStatusCategory(xhr.status, 400)) {
+	          if (_this5._hasStorage() && inStatusCategory(xhr.status, 400)) {
 	            // Remove stored fingerprint and corresponding endpoint,
 	            // on client errors since the file can not be found
-	            Storage.removeItem(_this4._fingerprint);
+	            _this5._storage.removeItem(_this5._fingerprint, function (err) {
+	              if (err) {
+	                _this5._emitError(err);
+	              }
+	            });
 	          }
 
 	          // If the upload is locked (indicated by the 423 Locked status code), we
@@ -905,48 +995,48 @@ var TusUploader = (function () {
 	          // is usually locked for a short period of time and will be available
 	          // afterwards.
 	          if (xhr.status === 423) {
-	            _this4._emitXhrError(xhr, new Error("tus: upload is currently locked; retry later"));
+	            _this5._emitXhrError(xhr, new Error("tus: upload is currently locked; retry later"));
 	            return;
 	          }
 
-	          if (!_this4.options.endpoint) {
+	          if (!_this5.options.endpoint) {
 	            // Don't attempt to create a new upload if no endpoint is provided.
-	            _this4._emitXhrError(xhr, new Error("tus: unable to resume upload (new upload cannot be created without an endpoint)"));
+	            _this5._emitXhrError(xhr, new Error("tus: unable to resume upload (new upload cannot be created without an endpoint)"));
 	            return;
 	          }
 
 	          // Try to create a new upload
-	          _this4.url = null;
-	          _this4._createUpload();
+	          _this5.url = null;
+	          _this5._createUpload();
 	          return;
 	        }
 
 	        var offset = parseInt(xhr.getResponseHeader("Upload-Offset"), 10);
 	        if (isNaN(offset)) {
-	          _this4._emitXhrError(xhr, new Error("tus: invalid or missing offset value"));
+	          _this5._emitXhrError(xhr, new Error("tus: invalid or missing offset value"));
 	          return;
 	        }
 
 	        var length = parseInt(xhr.getResponseHeader("Upload-Length"), 10);
-	        if (isNaN(length) && !_this4.options.uploadLengthDeferred) {
-	          _this4._emitXhrError(xhr, new Error("tus: invalid or missing length value"));
+	        if (isNaN(length) && !_this5.options.uploadLengthDeferred) {
+	          _this5._emitXhrError(xhr, new Error("tus: invalid or missing length value"));
 	          return;
 	        }
 
 	        // Upload has already been completed and we do not need to send additional
 	        // data to the server
 	        if (offset === length) {
-	          _this4._emitProgress(length, length);
-	          _this4._emitSuccess();
+	          _this5._emitProgress(length, length);
+	          _this5._emitSuccess();
 	          return;
 	        }
 
-	        _this4._offset = offset;
-	        _this4._startUpload();
+	        _this5._offset = offset;
+	        _this5._startUpload();
 	      };
 
 	      xhr.onerror = function (err) {
-	        _this4._emitXhrError(xhr, new Error("tus: failed to resume upload"), err);
+	        _this5._emitXhrError(xhr, new Error("tus: failed to resume upload"), err);
 	      };
 
 	      this._setupXHR(xhr);
@@ -964,7 +1054,7 @@ var TusUploader = (function () {
 	  }, {
 	    key: "_startUpload",
 	    value: function _startUpload() {
-	      var _this5 = this;
+	      var _this6 = this;
 
 	      // If the upload has been aborted, we will not send the next PATCH request.
 	      // This is important if the abort method was called during a callback, such
@@ -987,45 +1077,37 @@ var TusUploader = (function () {
 
 	      xhr.onload = function () {
 	        if (!inStatusCategory(xhr.status, 200)) {
-	          _this5._emitXhrError(xhr, new Error("tus: unexpected response while uploading chunk"));
+	          _this6._emitXhrError(xhr, new Error("tus: unexpected response while uploading chunk"));
 	          return;
 	        }
 
-	        var offset = parseInt(xhr.getResponseHeader("Upload-Offset"), 10);
-	        if (isNaN(offset)) {
-	          _this5._emitXhrError(xhr, new Error("tus: invalid or missing offset value"));
-	          return;
-	        }
-
-	        _this5._emitProgress(offset, _this5._size);
-	        _this5._emitChunkComplete(offset - _this5._offset, offset, _this5._size);
-
-	        _this5._offset = offset;
-
-	        if (offset == _this5._size) {
-	          if (_this5.options.removeFingerprintOnSuccess && _this5.options.resume) {
-	            // Remove stored fingerprint and corresponding endpoint. This causes
-	            // new upload of the same file must be treated as a different file.
-	            Storage.removeItem(_this5._fingerprint);
-	          }
-
-	          // Yay, finally done :)
-	          _this5._emitSuccess();
-	          _this5._source.close();
-	          return;
-	        }
-
-	        _this5._startUpload();
+	        _this6._handleUploadResponse(xhr);
 	      };
 
 	      xhr.onerror = function (err) {
 	        // Don't emit an error if the upload was aborted manually
-	        if (_this5._aborted) {
+	        if (_this6._aborted) {
 	          return;
 	        }
 
-	        _this5._emitXhrError(xhr, new Error("tus: failed to upload chunk at offset " + _this5._offset), err);
+	        _this6._emitXhrError(xhr, new Error("tus: failed to upload chunk at offset " + _this6._offset), err);
 	      };
+
+	      this._setupXHR(xhr);
+
+	      xhr.setRequestHeader("Upload-Offset", this._offset);
+	      this._addChunkToRequest(xhr);
+	    }
+
+	    /**
+	     * _addChunktoRequest reads a chunk from the source and sends it using the
+	     * supplied XHR object. It will not handle the response.
+	     */
+
+	  }, {
+	    key: "_addChunkToRequest",
+	    value: function _addChunkToRequest(xhr) {
+	      var _this7 = this;
 
 	      // Test support for progress events before attaching an event listener
 	      if ("upload" in xhr) {
@@ -1034,13 +1116,10 @@ var TusUploader = (function () {
 	            return;
 	          }
 
-	          _this5._emitProgress(start + e.loaded, _this5._size);
+	          _this7._emitProgress(start + e.loaded, _this7._size);
 	        };
 	      }
 
-	      this._setupXHR(xhr);
-
-	      xhr.setRequestHeader("Upload-Offset", this._offset);
 	      xhr.setRequestHeader("Content-Type", "application/offset+octet-stream");
 
 	      var start = this._offset;
@@ -1055,14 +1134,14 @@ var TusUploader = (function () {
 
 	      this._source.slice(start, end, function (err, value, complete) {
 	        if (err) {
-	          _this5._emitError(err);
+	          _this7._emitError(err);
 	          return;
 	        }
 
-	        if (_this5.options.uploadLengthDeferred) {
+	        if (_this7.options.uploadLengthDeferred) {
 	          if (complete) {
-	            _this5._size = _this5._offset + (value && value.size ? value.size : 0);
-	            xhr.setRequestHeader("Upload-Length", _this5._size);
+	            _this7._size = _this7._offset + (value && value.size ? value.size : 0);
+	            xhr.setRequestHeader("Upload-Length", _this7._size);
 	          }
 	        }
 
@@ -1070,9 +1149,81 @@ var TusUploader = (function () {
 	          xhr.send();
 	        } else {
 	          xhr.send(value);
-	          _this5._emitProgress(_this5._offset, _this5._size);
+	          _this7._emitProgress(_this7._offset, _this7._size);
 	        }
 	      });
+	    }
+
+	    /**
+	     * _handleUploadResponse is used by requests that haven been sent using _addChunkToRequest
+	     * and already have received a response.
+	     */
+
+	  }, {
+	    key: "_handleUploadResponse",
+	    value: function _handleUploadResponse(xhr) {
+	      var _this8 = this;
+
+	      var offset = parseInt(xhr.getResponseHeader("Upload-Offset"), 10);
+	      if (isNaN(offset)) {
+	        this._emitXhrError(xhr, new Error("tus: invalid or missing offset value"));
+	        return;
+	      }
+
+	      this._emitProgress(offset, this._size);
+	      this._emitChunkComplete(offset - this._offset, offset, this._size);
+
+	      this._offset = offset;
+
+	      if (offset == this._size) {
+	        if (this.options.removeFingerprintOnSuccess && this.options.resume) {
+	          // Remove stored fingerprint and corresponding endpoint. This causes
+	          // new upload of the same file must be treated as a different file.
+	          this._storage.removeItem(this._fingerprint, function (err) {
+	            if (err) {
+	              _this8._emitError(err);
+	            }
+	          });
+	        }
+
+	        // Yay, finally done :)
+	        this._emitSuccess();
+	        this._source.close();
+	        return;
+	      }
+
+	      this._startUpload();
+	    }
+	  }], [{
+	    key: "terminate",
+	    value: function terminate(url, options, cb) {
+	      if (typeof options !== "function" && typeof cb !== "function") {
+	        throw new Error("tus: a callback function must be specified");
+	      }
+
+	      if (typeof options === "function") {
+	        cb = options;
+	        options = {};
+	      }
+
+	      var xhr = (0, _request.newRequest)();
+	      xhr.open("DELETE", url, true);
+
+	      xhr.onload = function () {
+	        if (xhr.status !== 204) {
+	          cb(new _error2.default(new Error("tus: unexpected response while terminating upload"), null, xhr));
+	          return;
+	        }
+
+	        cb();
+	      };
+
+	      xhr.onerror = function (err) {
+	        cb(new _error2.default(err, new Error("tus: failed to terminate upload"), xhr));
+	      };
+
+	      setupXHR(xhr, options);
+	      xhr.send(null);
 	    }
 	  }]);
 
@@ -1099,14 +1250,27 @@ var TusUploader = (function () {
 	  return status >= category && status < category + 100;
 	}
 
+	function setupXHR(xhr, options) {
+	  xhr.setRequestHeader("Tus-Resumable", "1.0.0");
+	  var headers = options.headers || {};
+
+	  for (var name in headers) {
+	    xhr.setRequestHeader(name, headers[name]);
+	  }
+
+	  xhr.withCredentials = options.withCredentials;
+	}
+
 	Upload.defaultOptions = defaultOptions;
 
 	exports.default = Upload;
 
-	},{"./error":8,"./fingerprint":9,"./node/request":4,"./node/source":5,"./node/storage":6,"extend":12,"js-base64":13}],12:[function(_dereq_,module,exports){
+	},{"./error":9,"./node/fingerprint":1,"./node/request":5,"./node/source":6,"./node/storage":7,"extend":12,"js-base64":13}],12:[function(_dereq_,module,exports){
 
 	var hasOwn = Object.prototype.hasOwnProperty;
 	var toStr = Object.prototype.toString;
+	var defineProperty = Object.defineProperty;
+	var gOPD = Object.getOwnPropertyDescriptor;
 
 	var isArray = function isArray(arr) {
 		if (typeof Array.isArray === 'function') {
@@ -1131,17 +1295,46 @@ var TusUploader = (function () {
 		// Own properties are enumerated firstly, so to speed up,
 		// if last one is own, then all properties are own.
 		var key;
-		for (key in obj) {/**/}
+		for (key in obj) { /**/ }
 
 		return typeof key === 'undefined' || hasOwn.call(obj, key);
 	};
 
+	// If name is '__proto__', and Object.defineProperty is available, define __proto__ as an own property on target
+	var setProperty = function setProperty(target, options) {
+		if (defineProperty && options.name === '__proto__') {
+			defineProperty(target, options.name, {
+				enumerable: true,
+				configurable: true,
+				value: options.newValue,
+				writable: true
+			});
+		} else {
+			target[options.name] = options.newValue;
+		}
+	};
+
+	// Return undefined instead of __proto__ if '__proto__' is not an own property
+	var getProperty = function getProperty(obj, name) {
+		if (name === '__proto__') {
+			if (!hasOwn.call(obj, name)) {
+				return void 0;
+			} else if (gOPD) {
+				// In early versions of node, obj['__proto__'] is buggy when obj has
+				// __proto__ as an own property. Object.getOwnPropertyDescriptor() works.
+				return gOPD(obj, name).value;
+			}
+		}
+
+		return obj[name];
+	};
+
 	module.exports = function extend() {
-		var options, name, src, copy, copyIsArray, clone,
-			target = arguments[0],
-			i = 1,
-			length = arguments.length,
-			deep = false;
+		var options, name, src, copy, copyIsArray, clone;
+		var target = arguments[0];
+		var i = 1;
+		var length = arguments.length;
+		var deep = false;
 
 		// Handle a deep copy situation
 		if (typeof target === 'boolean') {
@@ -1149,7 +1342,8 @@ var TusUploader = (function () {
 			target = arguments[1] || {};
 			// skip the boolean and the target
 			i = 2;
-		} else if ((typeof target !== 'object' && typeof target !== 'function') || target == null) {
+		}
+		if (target == null || (typeof target !== 'object' && typeof target !== 'function')) {
 			target = {};
 		}
 
@@ -1159,8 +1353,8 @@ var TusUploader = (function () {
 			if (options != null) {
 				// Extend the base object
 				for (name in options) {
-					src = target[name];
-					copy = options[name];
+					src = getProperty(target, name);
+					copy = getProperty(options, name);
 
 					// Prevent never-ending loop
 					if (target !== copy) {
@@ -1174,11 +1368,11 @@ var TusUploader = (function () {
 							}
 
 							// Never move original objects, clone them
-							target[name] = extend(deep, clone, copy);
+							setProperty(target, { name: name, newValue: extend(deep, clone, copy) });
 
 						// Don't bring in undefined values
 						} else if (typeof copy !== 'undefined') {
-							target[name] = copy;
+							setProperty(target, { name: name, newValue: copy });
 						}
 					}
 				}
@@ -1189,13 +1383,12 @@ var TusUploader = (function () {
 		return target;
 	};
 
-
 	},{}],13:[function(_dereq_,module,exports){
 	(function (global){
 	(function (global, factory) {
 	    typeof exports === 'object' && typeof module !== 'undefined'
 	        ? module.exports = factory(global)
-	        : factory(global);
+	        :  factory(global);
 	}((
 	    typeof self !== 'undefined' ? self
 	        : typeof window !== 'undefined' ? window
@@ -1962,44 +2155,67 @@ var TusUploader = (function () {
 
 	unwrapExports(tus);
 
-	var ee = createCommonjsModule(function (module) {
-	module.exports = {
-	    on: function (ev, handler) {
-	        var events = this._events
+	//      
+	// An event handler can take an optional event argument
+	// and should not return a value
+	                                          
+	                                                               
 
-	        ;(events[ev] || (events[ev] = [])).push(handler);
-	    },
-	    removeListener: function (ev, handler) {
-	        var array = this._events[ev];
+	// An array of all currently registered event handlers for a type
+	                                            
+	                                                            
+	// A map of event types and their corresponding event handlers.
+	                        
+	                                 
+	                                   
+	  
 
-	        array && array.splice(array.indexOf(handler), 1);
-	    },
-	    emit: function (ev) {
-	        var args = [].slice.call(arguments, 1),
-	            array = this._events[ev] || [];
+	/** Mitt: Tiny (~200b) functional event emitter / pubsub.
+	 *  @name mitt
+	 *  @returns {Mitt}
+	 */
+	function mitt(all                 ) {
+		all = all || Object.create(null);
 
-	        for (var i = 0, len = array.length; i < len; i++) {
-	            array[i].apply(this, args);
-	        }
-	    },
-	    once: function (ev, handler) {
-	        this.on(ev, function () {
-	            handler.apply(this, arguments);
-	            this.removeListener(ev, handler);
-	        });
-	    },
-	    constructor: function constructor() {
-	        this._events = {};
-	        return this
-	    }
-	};
+		return {
+			/**
+			 * Register an event handler for the given type.
+			 *
+			 * @param  {String} type	Type of event to listen for, or `"*"` for all events
+			 * @param  {Function} handler Function to call in response to given event
+			 * @memberOf mitt
+			 */
+			on: function on(type        , handler              ) {
+				(all[type] || (all[type] = [])).push(handler);
+			},
 
-	module.exports.constructor.prototype = module.exports;
-	});
-	var ee_1 = ee.on;
-	var ee_2 = ee.removeListener;
-	var ee_3 = ee.emit;
-	var ee_4 = ee.once;
+			/**
+			 * Remove an event handler for the given type.
+			 *
+			 * @param  {String} type	Type of event to unregister `handler` from, or `"*"`
+			 * @param  {Function} handler Handler function to remove
+			 * @memberOf mitt
+			 */
+			off: function off(type        , handler              ) {
+				if (all[type]) {
+					all[type].splice(all[type].indexOf(handler) >>> 0, 1);
+				}
+			},
+
+			/**
+			 * Invoke all handlers for the given type.
+			 * If present, `"*"` handlers are invoked after type-matched handlers.
+			 *
+			 * @param {String} type  The event type to invoke
+			 * @param {Any} [evt]  Any value (object is recommended and powerful), passed to each handler
+			 * @memberOf mitt
+			 */
+			emit: function emit(type        , evt     ) {
+				(all[type] || []).slice().map(function (handler) { handler(evt); });
+				(all['*'] || []).slice().map(function (handler) { handler(type, evt); });
+			}
+		};
+	}
 
 	var pad = function pad (num, size) {
 	  var s = '000000000' + num;
@@ -2019,7 +2235,10 @@ var TusUploader = (function () {
 
 	var getRandomValue;
 
-	var crypto = window.crypto || window.msCrypto;
+	var crypto = typeof window !== 'undefined' &&
+	  (window.crypto || window.msCrypto) ||
+	  typeof self !== 'undefined' &&
+	  self.crypto;
 
 	if (crypto) {
 	    var lim = Math.pow(2, 32) - 1;
@@ -2848,7 +3067,7 @@ var TusUploader = (function () {
 	var root = freeGlobal || freeSelf || Function('return this')();
 
 	/** Detect free variable `exports`. */
-	var freeExports = exports && !exports.nodeType && exports;
+	var freeExports =  exports && !exports.nodeType && exports;
 
 	/** Detect free variable `module`. */
 	var freeModule = freeExports && 'object' == 'object' && module && !module.nodeType && module;
@@ -4545,7 +4764,7 @@ var TusUploader = (function () {
 	      indexes = [],
 	      length = array.length;
 
-	  predicate = baseIteratee(predicate, 3);
+	  predicate = baseIteratee(predicate);
 	  while (++index < length) {
 	    var value = array[index];
 	    if (predicate(value, index, array)) {
@@ -5191,7 +5410,7 @@ var TusUploader = (function () {
 	var root = freeGlobal || freeSelf || Function('return this')();
 
 	/** Detect free variable `exports`. */
-	var freeExports = exports && !exports.nodeType && exports;
+	var freeExports =  exports && !exports.nodeType && exports;
 
 	/** Detect free variable `module`. */
 	var freeModule = freeExports && 'object' == 'object' && module && !module.nodeType && module;
@@ -6923,7 +7142,7 @@ var TusUploader = (function () {
 	 */
 	function filter(collection, predicate) {
 	  var func = isArray(collection) ? arrayFilter : baseFilter;
-	  return func(collection, baseIteratee(predicate, 3));
+	  return func(collection, baseIteratee(predicate));
 	}
 
 	/**
@@ -7537,7 +7756,7 @@ var TusUploader = (function () {
 	        chunkSize: 5000
 	    };
 
-	    var ee$1 = Object.create(ee).constructor();
+	    var ee = mitt();
 
 	    var uploadsQueue = [];
 
@@ -7564,7 +7783,7 @@ var TusUploader = (function () {
 
 	        this.status = UploadStatus.FAILED;
 
-	        ee$1.emit('upload.failed', { upload: this, type: 'upload.failed', error: error });
+	        ee.emit('upload.failed', { upload: this, type: 'upload.failed', error: error });
 	    }
 
 	    /**
@@ -7577,7 +7796,7 @@ var TusUploader = (function () {
 	        this.uploadPercentage = percentage;
 	        this.uploadTransferredSize = bytesUploaded;
 
-	        ee$1.emit('upload.progress', { upload: this, type: 'upload.progress', percentage: percentage, total: bytesTotal, transferred: bytesUploaded });
+	        ee.emit('upload.progress', { upload: this, type: 'upload.progress', percentage: percentage, total: bytesTotal, transferred: bytesUploaded });
 	    }
 
 	    /**
@@ -7586,7 +7805,7 @@ var TusUploader = (function () {
 	    function handleUploadSuccess() {
 	        this.status = UploadStatus.COMPLETED;
 
-	        ee$1.emit('upload.completed', { upload: this, type: 'upload.completed' });
+	        ee.emit('upload.completed', { upload: this, type: 'upload.completed' });
 	    }
 
 
@@ -7641,7 +7860,7 @@ var TusUploader = (function () {
 	        this.status = UploadStatus.CANCELLED;
 	        
 	        window.axios.delete(options.endpoint + '' + this.id).then(function (/* response */) {
-	            ee$1.emit('upload.cancelled', { upload: this, type: 'upload.cancelled' });
+	            ee.emit('upload.cancelled', { upload: this, type: 'upload.cancelled' });
 	            // console.log('Upload cancelled', response)
 	        }.bind(this)).
 	        catch(function (/* error */) {
@@ -7659,7 +7878,7 @@ var TusUploader = (function () {
 	    Upload.prototype.start = function () {
 
 	        this.status = UploadStatus.STARTED;
-	        ee$1.emit('upload.started', { upload: this, type: 'upload.started' });
+	        ee.emit('upload.started', { upload: this, type: 'upload.started' });
 	        
 	        window.axios.post(options.endpoint, lodash_assignin({
 	            id: this.id,
@@ -7702,7 +7921,7 @@ var TusUploader = (function () {
 	        // add it to the queue
 	        uploadsQueue.push(upload);
 
-	        ee$1.emit('upload.queued', { upload: upload, type: 'upload.queued' });
+	        ee.emit('upload.queued', { upload: upload, type: 'upload.queued' });
 
 	        if (options.autoUpload) {
 	            // Immediately start the upload
@@ -7736,7 +7955,7 @@ var TusUploader = (function () {
 	                }
 	            }, this);
 
-	            ee$1.emit('upload.removed', { upload: removed, type: 'upload.removed' });
+	            ee.emit('upload.removed', { upload: removed, type: 'upload.removed' });
 
 	            return removed;
 	        }
@@ -7790,7 +8009,7 @@ var TusUploader = (function () {
 	     */
 	    TusUploadInner.on = function (event, callback) {
 
-	        ee$1.on(event, callback);
+	        ee.on(event, callback);
 
 	        return TusUploadInner;
 	    };
@@ -7804,7 +8023,7 @@ var TusUploader = (function () {
 	     */
 	    TusUploadInner.off = function (event, callback) {
 
-	        ee$1.removeListener(event, callback);
+	        ee.removeListener(event, callback);
 
 	        return TusUploadInner;
 	    };
