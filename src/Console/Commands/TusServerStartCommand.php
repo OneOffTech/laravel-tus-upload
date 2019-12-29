@@ -91,7 +91,7 @@ class TusServerStartCommand extends Command
  
     public function sigintShutdown($signal)
     {
-        if ($signal === SIGINT || $signal === SIGTERM) {
+        if ($signal === SIGINT || $signal === SIGTERM || $signal === SIGKILL) {
             $this->shutdownCallback();
         }
     }

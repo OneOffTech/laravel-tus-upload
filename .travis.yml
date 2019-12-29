@@ -6,6 +6,10 @@ branches:
   - /^v\d+\.\d+(\.\d+)?(-\S*)?$/
   - /^\d+\.\d+?$/
 
+cache:
+  directories:
+  - $HOME/.composer/cache
+
 php:
   - 7.0
   - 7.1
@@ -25,6 +29,7 @@ matrix:
 sudo: false
 
 before_install:
+  - travis_retry composer self-update
   - composer require "illuminate/auth:${LARAVEL_VERSION}" --no-update
   - composer require "illuminate/console:${LARAVEL_VERSION}" --no-update
   - composer require "illuminate/contracts:${LARAVEL_VERSION}" --no-update
@@ -35,7 +40,6 @@ before_install:
 
 
 install:
-  - travis_retry composer self-update
   - travis_retry composer update --no-interaction --prefer-dist
 
 script:
