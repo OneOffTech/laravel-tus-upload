@@ -80,7 +80,6 @@ class SupportsTusdTraitTest extends AbstractTestCase
         // change some configuration parameters and check if the result is upgraded
 
         $this->app['config']->set('tusupload.port', 9999);
-        $this->app['config']->set('tusupload.storage_size', 100);
         $this->app['config']->set('tusupload.expose_metrics', true);
         
         $arguments = static::tusdArguments();
@@ -91,7 +90,6 @@ class SupportsTusdTraitTest extends AbstractTestCase
             '-base-path=/uploads/',
             '-upload-dir=' . storage_path('app/uploads'),
             '-hooks-dir=' .  static::hooksPath(),
-            '-store-size=100',
             '-expose-metrics'
         ], $arguments);
         
@@ -106,7 +104,6 @@ class SupportsTusdTraitTest extends AbstractTestCase
             '-port=9999',
             '-base-path=/uploads/',
             '-upload-dir=' . storage_path('app/uploads'),
-            '-store-size=100',
             '-expose-metrics'
         ], $arguments);
     }

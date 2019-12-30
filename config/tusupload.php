@@ -91,19 +91,6 @@ return [
     */
 
     'storage' => env('TUSUPLOAD_STORAGE_PATH') ?: storage_path('app/uploads'),
-    
-    /*
-    |--------------------------------------------------------------------------
-    | Upload storage maximum usable 
-    |--------------------------------------------------------------------------
-    |
-    | The maximum amount of space to use for storing the uploads
-    |
-    | Default null: unlimited
-    |
-    */
-
-    'storage_size' => env('TUSUPLOAD_STORAGE_MAXIMUM_SIZE') ?: null,
 
 
     /*

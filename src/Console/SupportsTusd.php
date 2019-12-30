@@ -121,10 +121,6 @@ trait SupportsTusd
             $arguments[] = '-behind-proxy';
         }
         
-        if(config('tusupload.storage_size')){
-            $arguments[] = '-store-size=' . config('tusupload.storage_size');
-        }
-        
         if(config('tusupload.expose_metrics')){
             $arguments[] = '-expose-metrics';
         }
