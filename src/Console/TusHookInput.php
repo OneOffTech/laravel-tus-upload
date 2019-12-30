@@ -27,7 +27,9 @@ class TusHookInput
     {
         $request = new static;
         
-        $request->data = json_decode($hookPayload, true);
+        $decodedPayload = json_decode($hookPayload, true);
+
+        $request->data = $decodedPayload['Upload'] ?? $decodedPayload;
 
         return $request;
     }

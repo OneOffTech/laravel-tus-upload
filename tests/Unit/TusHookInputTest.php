@@ -10,7 +10,7 @@ class TusHookInputTest extends AbstractTestCase
 
     private function generateHookPayload($requestId, $tusId = '', $offset = 0)
     {
-        return sprintf('{' .
+        return sprintf('{"Upload": {' .
                           '"ID": "%2$s",' .
                           '"Size": 46205,' .
                           '"Offset": %3$s,' .
@@ -22,7 +22,7 @@ class TusHookInputTest extends AbstractTestCase
                           '  "token": "AAAAAAAAAAA",' .
                           '  "upload_request_id": "%1$s"' .
                           '}' .
-                        '}', $requestId, $tusId, $offset);
+                        '}}', $requestId, $tusId, $offset);
     }
 
     /** @test */
