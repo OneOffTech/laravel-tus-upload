@@ -108,7 +108,7 @@ trait SupportsTusd
             '-host=' . config('tusupload.host'),
             '-port=' . config('tusupload.port'),
             '-base-path=' . config('tusupload.base_path'),
-            '-dir=' .  config('tusupload.storage'),            
+            '-upload-dir=' .  config('tusupload.storage'),            
         ];
 
         $hooksPath = static::hooksPath();
