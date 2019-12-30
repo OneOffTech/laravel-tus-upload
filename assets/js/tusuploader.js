@@ -7,7 +7,7 @@
 // Global axios
 
 var tus = require("../../node_modules/tus-js-client/dist/tus");
-var EventEmitter = require('eventemitter-light');
+var eventEmitter = require('mitt');
 var cuid = require('cuid');
 var assignIn = require('lodash.assignin');
 var _ = {
@@ -79,7 +79,7 @@ module.exports = function (config) {
         chunkSize: 5000
     };
 
-    var ee = Object.create(EventEmitter).constructor();
+    var ee = eventEmitter();
 
     var uploadsQueue = [];
 
