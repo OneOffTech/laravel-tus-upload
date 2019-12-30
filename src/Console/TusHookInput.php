@@ -3,7 +3,6 @@
 namespace OneOffTech\TusUpload\Console;
 
 use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
 
 class TusHookInput
 {
@@ -30,6 +29,8 @@ class TusHookInput
         $decodedPayload = json_decode($hookPayload, true);
 
         $request->data = $decodedPayload['Upload'] ?? $decodedPayload;
+        
+        $request->data['HTTPRequest'] = $decodedPayload['HTTPRequest'] ?? [];
 
         return $request;
     }
@@ -105,13 +106,19 @@ class TusHookInput
      *
      * @param  string  $key
      * @param  string|array|null  $default
-     * @return string|array
+     * @return string|array|null
      */
     public function input($key = null, $default = null)
     {
-        return data_get(
+        $data = data_get(
             $this->data, $key, $default
         );
+
+        if(is_array($data)){
+            return $data;
+        }
+
+        return $data ? e($data) : null;
     }
 
     /**

@@ -10,19 +10,34 @@ class TusHookInputTest extends AbstractTestCase
 
     private function generateHookPayload($requestId, $tusId = '', $offset = 0)
     {
-        return sprintf('{"Upload": {' .
-                          '"ID": "%2$s",' .
-                          '"Size": 46205,' .
-                          '"Offset": %3$s,' .
-                          '"IsFinal": false,' .
-                          '"IsPartial": false,' .
-                          '"PartialUploads": null,' .
-                          '"MetaData": {' .
-                          '  "filename": "test.png",' .
-                          '  "token": "AAAAAAAAAAA",' .
-                          '  "upload_request_id": "%1$s"' .
-                          '}' .
-                        '}}', $requestId, $tusId, $offset);
+        return sprintf('{' . 
+                          '"Upload": {' .
+                            '"ID": "%2$s",' .
+                            '"Size": 46205,' .
+                            '"Offset": %3$s,' .
+                            '"IsFinal": false,' .
+                            '"IsPartial": false,' .
+                            '"PartialUploads": null,' .
+                            '"MetaData": {' .
+                            '  "filename": "test.png",' .
+                            '  "token": "AAAAAAAAAAA",' .
+                            '  "upload_request_id": "%1$s"' .
+                            '},' .
+                            '"Storage": {'.
+                              '"Type": "filestore",'.
+                              '"Path": "/my/upload/directory/%2$s"'.
+                            '}'.
+                          '},'.
+                          '"HTTPRequest": {'.
+                            '"Method": "PATCH",'.
+                            '"URI": "/files/%2$s",'.
+                            '"RemoteAddr": "1.2.3.4:47689",'.
+                            '"Header": {'.
+                              '"Host": "myuploads.net",'.
+                              '"Cookies": "..."'.
+                            '}'.
+                          '}'.
+                        '}', $requestId, $tusId, $offset);
     }
 
     /** @test */
@@ -74,6 +89,38 @@ class TusHookInputTest extends AbstractTestCase
         $this->assertEquals($tus_id, $request->input('ID'));
         $this->assertEquals($offset, $request->input('Offset'));
         $this->assertEquals(46205, $request->input('Size'));
+    }
+
+    /** @test */
+    public function request_storage_is_retrievable()
+    {
+        $request_id = '14b1c4c77771671a8479bc0444bbc5ce';
+        $tus_id = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
+        $offset = 100;
+
+        $hook_content = $this->generateHookPayload($request_id, $tus_id, $offset);
+
+        $request = TusHookInput::create($hook_content);
+
+        $this->assertTrue($request->has('Storage'));
+        $this->assertEquals('filestore', $request->input('Storage.Type'));
+        $this->assertEquals("/my/upload/directory/$tus_id", $request->input('Storage.Path'));
+    }
+
+    /** @test */
+    public function request_original_http_request_is_retrievable()
+    {
+        $request_id = '14b1c4c77771671a8479bc0444bbc5ce';
+        $tus_id = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
+        $offset = 100;
+
+        $hook_content = $this->generateHookPayload($request_id, $tus_id, $offset);
+
+        $request = TusHookInput::create($hook_content);
+
+        $this->assertTrue($request->has('HTTPRequest'));
+        $this->assertEquals('PATCH', $request->input('HTTPRequest.Method'));
+        $this->assertEquals("/files/$tus_id", $request->input('HTTPRequest.URI'));
     }
 
 }
