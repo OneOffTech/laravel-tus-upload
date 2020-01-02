@@ -181,6 +181,6 @@ class TusUpload extends Model
      */
     public function path()
     {
-        return $this->started ? config('tusupload.storage').'/'.$this->tus_id . '.bin' : null;
+        return $this->started ? config('tusupload.storage').'/'.$this->tus_id : null;
     }
 }
