@@ -206,6 +206,8 @@ input.addEventListener("change", function(e) {
 
 ```
 
+> If you are using a module bundler, like Webpack, consider using the common js module version in `public/js/tusuploader.cjs.js`
+
 ### `TusUploader` object
 
 The `TusUploader` object handles file upload and queue management. To create an instance of the `TusUploader` use 
