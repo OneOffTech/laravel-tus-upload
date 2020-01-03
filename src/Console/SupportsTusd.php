@@ -153,7 +153,7 @@ trait SupportsTusd
     protected static function hooksPath()
     {
 
-        $base = config('tusupload.hooks');
+        $base = config('tusupload.hooks_path');
 
         if(empty($base)){
             return null;

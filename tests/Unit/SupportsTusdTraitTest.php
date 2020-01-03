@@ -95,7 +95,7 @@ class SupportsTusdTraitTest extends AbstractTestCase
         
         // make also the hooks config empty
 
-        $this->app['config']->set('tusupload.hooks', '');
+        $this->app['config']->set('tusupload.hooks_path', '');
         
         $arguments = static::tusdArguments();
 

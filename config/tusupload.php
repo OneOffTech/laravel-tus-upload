@@ -22,7 +22,7 @@ return [
     |
     */
 
-    'hooks' => env('TUSUPLOAD_HOOKS_DIRECTORY') ?: __DIR__ . '/../hooks',
+    'hooks_path' => env('TUSUPLOAD_HOOKS_DIRECTORY') ?: __DIR__ . '/../hooks',
     
     /*
     |--------------------------------------------------------------------------

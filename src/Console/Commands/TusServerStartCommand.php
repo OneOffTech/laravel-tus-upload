@@ -57,7 +57,7 @@ class TusServerStartCommand extends Command
             $noHooks = $this->option('no-hooks');
 
             if($noHooks){
-                config(['tusupload.hooks' => '']);
+                config(['tusupload.hooks_path' => '']);
             }
 
             static::startTusd(function ($type, $buffer) {
