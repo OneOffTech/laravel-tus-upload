@@ -2,6 +2,7 @@
 
 namespace Tests\Unit;
 
+use Carbon\Carbon;
 use Tests\AbstractTestCase;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -146,7 +147,8 @@ class TusUploadQueueControllerTest extends AbstractTestCase
         $cancelled_upload = $upload->fresh();
 
         $this->assertTrue($cancelled_upload->cancelled);
-        $this->assertEquals(json_encode($cancelled_upload), $response->getContent());
+        $this->assertInstanceOf(Carbon::class, $cancelled_upload->cancelled_at);
+        $this->assertJson($response->getContent());
 
         Event::assertDispatched(TusUploadCancelled::class, function ($e) use ($cancelled_upload) {
             return $e->upload->id === $cancelled_upload->id;

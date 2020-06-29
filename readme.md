@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.com/OneOffTech/laravel-tus-upload.svg?branch=master)](https://travis-ci.com/OneOffTech/laravel-tus-upload)
+![CI](https://github.com/OneOffTech/laravel-tus-upload/workflows/CI/badge.svg)
 
 # Laravel [Tus](http://tus.io/) based Upload
 
@@ -20,7 +20,7 @@ This package contains a PHP component for controlling the Tus upload server and 
 
 To get started, install Laravel Tus Upload via the [Composer](http://getcomposer.org/) package manager.
 
-> Requires PHP 7.1
+> Requires PHP 7.2
 
 ```bash
 composer require oneofftech/laravel-tus-upload
