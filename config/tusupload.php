@@ -11,7 +11,7 @@ return [
     |
     */
     
-    'executable' => env('TUSUPLOAD_EXECUTABLE') ?: __DIR__ . '/../bin/tusd-',
+    'executable' => env('TUSUPLOAD_EXECUTABLE') ?: base_path('vendor/oneofftech/laravel-tus-upload/bin/tusd-'),
 
     /*
     |--------------------------------------------------------------------------
@@ -22,7 +22,7 @@ return [
     |
     */
 
-    'hooks' => env('TUSUPLOAD_HOOKS_DIRECTORY') ?: __DIR__ . '/../hooks',
+    'hooks' => env('TUSUPLOAD_HOOKS_DIRECTORY') ?: base_path('vendor/oneofftech/laravel-tus-upload/hooks'),
     
     /*
     |--------------------------------------------------------------------------
