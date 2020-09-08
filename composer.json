@@ -40,6 +40,8 @@
         "preferred-install": "dist",
         "sort-packages": true
     },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
     "extra": {
         "brach-alias": {
             "dev-master": "0.8.x-dev"
