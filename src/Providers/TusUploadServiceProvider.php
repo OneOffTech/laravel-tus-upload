@@ -25,7 +25,7 @@ class TusUploadServiceProvider extends ServiceProvider
 
         $this->publishes([
             __DIR__.'/../../config/tusupload.php' => config_path('tusupload.php'),
-        ], 'tusupload-config');
+        ], 'config');
 
         if ($this->app->runningInConsole()) {
             $this->commands([
@@ -49,7 +49,7 @@ class TusUploadServiceProvider extends ServiceProvider
         $this->app->bind(AuthenticationResolverContract::class, AuthenticationResolver::class);
         $this->app->singleton(AuthenticationResolver::class, function($app){
             return new AuthenticationResolver(
-                $app->make(Gate::class), 
+                $app->make(Gate::class),
                 Auth::createUserProvider(config('auth.guards.api.provider')));
         });
     }
