@@ -27,6 +27,10 @@ class TusUploadServiceProvider extends ServiceProvider
             __DIR__.'/../../config/tusupload.php' => config_path('tusupload.php'),
         ], 'config');
 
+        $this->publishes([
+            __DIR__.'/../../database/migrations/' => database_path('migrations'),
+        ], 'migrations');
+
         if ($this->app->runningInConsole()) {
             $this->commands([
                 TusServerStartCommand::class,
