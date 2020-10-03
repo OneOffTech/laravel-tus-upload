@@ -143,7 +143,7 @@ You can configure the tus related options via environment variables:
 In alternative, if you prefer, you can publish the configuration file in your Laravel installation.
 
 ```
-php artisan vendor:publish --tag=tusupload-config
+php artisan vendor:publish --provider="OneOffTech\TusUpload\Providers\TusUploadServiceProvider" --tag=config
 ```
 
 ### Starting the Tus server
