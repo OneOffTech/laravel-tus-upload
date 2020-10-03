@@ -146,6 +146,8 @@ In alternative, if you prefer, you can publish the configuration file in your La
 php artisan vendor:publish --provider="OneOffTech\TusUpload\Providers\TusUploadServiceProvider" --tag=config
 ```
 
+> If you want to customize both configuration and migrations use `php artisan vendor:publish --provider="OneOffTech\TusUpload\Providers\TusUploadServiceProvider"`
+
 ### Starting the Tus server
 
 The tusd binary is already included in the package under the `/bin` folder. 
