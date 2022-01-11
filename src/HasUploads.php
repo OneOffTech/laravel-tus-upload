@@ -1,8 +1,7 @@
 <?php
 
-namespace OneOffTech\Uploaddy;
+namespace OneOffTech\TusUpload;
 
-use Illuminate\Container\Container;
 use OneOffTech\TusUpload\TusUpload;
 
 trait HasUploads
