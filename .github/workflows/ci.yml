@@ -9,7 +9,7 @@ on:
 
 jobs:
   phpunit:
-    name: Tests PHP ${{ matrix.php }} - Laravel ${{ matrix.laravel }}
+    name: Tests PHP ${{ matrix.php }}
     runs-on: ubuntu-latest
 
     strategy:
