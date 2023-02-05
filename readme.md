@@ -20,7 +20,7 @@ This package contains a PHP component for controlling the Tus upload server and 
 
 To get started, install Laravel Tus Upload via the [Composer](http://getcomposer.org/) package manager.
 
-> Requires PHP 7.2
+> Requires PHP >= 8.0
 
 ```bash
 composer require oneofftech/laravel-tus-upload
