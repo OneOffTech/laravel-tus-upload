@@ -37,7 +37,9 @@ trait ProcessHooks
         $upload = $this->uploads->findByUploadRequestAndToken($requestId, $token);
 
         if(is_null($upload)){
-            Log::info("Upload identified by {$requestId}-{$token} not existing.");
+            Log::info("Upload not existing.", [
+                'identifier' => "{$requestId}-{$token}",
+            ]);
             throw new Exception('Upload not found, continuation not granted');
         }
 
@@ -98,7 +100,9 @@ trait ProcessHooks
         $upload = $this->uploads->findByUploadRequestAndToken($requestId, $token);
 
         if(is_null($upload)){
-            Log::error("Tus post finish, upload {$requestId}-{$token} not found.");
+            Log::error("Tus post finish, upload not found.", [
+                'identifier' => "{$requestId}-{$token}",
+            ]);
             return false;
         }
 
@@ -124,7 +128,9 @@ trait ProcessHooks
         $upload = $this->uploads->findByUploadRequestAndToken($requestId, $token);
 
         if(is_null($upload)){
-            Log::error("Upload {$requestId}-{$token} not found.");
+            Log::error("Upload not found.", [
+                'identifier' => "{$requestId}-{$token}",
+            ]);
             return false;
         }
 
