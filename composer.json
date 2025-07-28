@@ -6,18 +6,18 @@
     "type": "project",
     "require": {
         "php": "^8.0.2",
-        "illuminate/auth": "9.*",
-        "illuminate/console": "9.*",
-        "illuminate/contracts": "9.*",
-        "illuminate/database": "9.*",
-        "illuminate/events": "9.*",
-        "illuminate/support": "9.*",
-        "illuminate/view": "9.*"
+        "illuminate/auth": "^9.0|^10.0",
+        "illuminate/console": "^9.0|^10.0",
+        "illuminate/contracts": "^9.0|^10.0",
+        "illuminate/database": "^9.0|^10.0",
+        "illuminate/events": "^9.0|^10.0",
+        "illuminate/support": "^9.0|^10.0",
+        "illuminate/view": "^9.0|^10.0"
     },
     "require-dev": {
         "mockery/mockery": "^1.4.4",
-        "phpunit/phpunit": "^9.5.10",
-        "orchestra/testbench": "^7.0"
+        "phpunit/phpunit": "^9.5.10|^10.0",
+        "orchestra/testbench": "^7.0|^8.0"
     },
     "autoload": {
         "classmap": [
