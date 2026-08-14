@@ -154,6 +154,7 @@ module.exports = function (config) {
             endpoint: options.tus_endpoint,
             retryDelays: options.retryDelays,
             chunkSize: options.chunkSize,
+            overridePatchMethod: options.overridePatchMethod,
             metadata: this.metadata,
             onError: handleUploadError.bind(this),
             onChunkComplete: handleUploadProgress.bind(this),
