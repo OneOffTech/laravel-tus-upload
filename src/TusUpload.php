@@ -59,18 +59,10 @@ class TusUpload extends Model
      */
     protected $casts = [
         'metadata' => 'array',
-    ];
-
-    /**
-     * The attributes that should be mutated to dates.
-     *
-     * @var array
-     */
-    protected $dates = [
-        'created_at',
-        'updated_at',
-        'cancelled_at',
-        'completed_at'
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+        'cancelled_at' => 'datetime',
+        'completed_at' => 'datetime',
     ];
 
 

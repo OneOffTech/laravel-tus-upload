@@ -105,4 +105,16 @@ return [
 
     'expose_metrics' => false,
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | Log channel
+    |--------------------------------------------------------------------------
+    |
+    | Specifies which log channel to use.
+    | See the channels in Laravel applications config/logging.php
+    |
+    */
+
+    'log_channel' => env('TUSUPLOAD_LOG_CHANNEL', env('LOG_CHANNEL')),
 ];

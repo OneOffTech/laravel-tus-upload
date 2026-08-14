@@ -29,7 +29,7 @@ trait ProcessHooks
      */
     private function preCreate(TusHookInput $payload)
     {
-        Log::info("Processing preCreate...", ['payload' => $payload->__toString()]);
+        $this->logDebug("Processing preCreate...", ['payload' => $payload->__toString()]);
 
         $requestId = $payload->id();
         $token = $payload->input('MetaData.token');
@@ -37,7 +37,9 @@ trait ProcessHooks
         $upload = $this->uploads->findByUploadRequestAndToken($requestId, $token);
 
         if(is_null($upload)){
-            Log::info("Upload identified by {$requestId}-{$token} not existing.");
+            $this->logInfo("Upload not existing.", [
+                'identifier' => "{$requestId}-{$token}",
+            ]);
             throw new Exception('Upload not found, continuation not granted');
         }
 
@@ -71,7 +73,7 @@ trait ProcessHooks
                 // subsequent progress events, we update the entry in the database only if
                 if($payload->input('Offset') > $upload->offset && $currentPercent > ($savedPercent + 10)){
 
-                    Log::info("Processing postReceive...", ['payload' => $payload->__toString()]);
+                    $this->logDebug("Processing postReceive...", ['payload' => $payload->__toString()]);
 
                     // let's update the status of the upload
                     $this->uploads->updateProgress($upload, $payload->input('Offset'));
@@ -90,7 +92,7 @@ trait ProcessHooks
      */
     private function postFinish(TusHookInput $payload)
     {
-        Log::info("Processing postFinish...", ['payload' => $payload->__toString()]);
+        $this->logDebug("Processing postFinish...", ['payload' => $payload->__toString()]);
 
         $requestId = $payload->id();
         $token = $payload->input('MetaData.token');
@@ -98,7 +100,9 @@ trait ProcessHooks
         $upload = $this->uploads->findByUploadRequestAndToken($requestId, $token);
 
         if(is_null($upload)){
-            Log::error("Tus post finish, upload {$requestId}-{$token} not found.");
+            $this->logError("Tus post finish, upload not found.", [
+                'identifier' => "{$requestId}-{$token}",
+            ]);
             return false;
         }
 
@@ -116,7 +120,7 @@ trait ProcessHooks
      */
     private function postTerminate(TusHookInput $payload)
     {
-        Log::info("Processing postTerminate...", ['payload' => $payload->__toString()]);
+        $this->logDebug("Processing postTerminate...", ['payload' => $payload->__toString()]);
 
         $requestId = $payload->id();
         $token = $payload->input('MetaData.token');
@@ -124,7 +128,9 @@ trait ProcessHooks
         $upload = $this->uploads->findByUploadRequestAndToken($requestId, $token);
 
         if(is_null($upload)){
-            Log::error("Upload {$requestId}-{$token} not found.");
+            $this->logError("Upload not found.", [
+                'identifier' => "{$requestId}-{$token}",
+            ]);
             return false;
         }
 
@@ -135,5 +141,28 @@ trait ProcessHooks
         $this->uploads->cancel($upload);
 
         return true;
+    }
+
+    private function logDebug($message, array $context = []): void
+    {
+        $channel = $this->getLogChannel();
+        Log::channel($channel)->debug($message, $context);
+    }
+
+    private function logInfo($message, array $context = []): void
+    {
+        $channel = $this->getLogChannel();
+        Log::channel($channel)->info($message, $context);
+    }
+
+    private function logError($message, array $context = []): void
+    {
+        $channel = $this->getLogChannel();
+        Log::channel($channel)->error($message, $context);
+    }
+
+    private function getLogChannel(): ?string
+    {
+        return config('tusupload.log_channel');
     }
 }

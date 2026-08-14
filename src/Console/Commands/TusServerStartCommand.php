@@ -58,6 +58,8 @@ class TusServerStartCommand extends Command
 
             if($noHooks){
                 config(['tusupload.hooks' => '']);
+            } else {
+                $this->ensureHooksHaveExecutePermissions();
             }
 
             static::startTusd(function ($type, $buffer) {
@@ -87,6 +89,94 @@ class TusServerStartCommand extends Command
         }
 
         return 0;
+    }
+
+    /**
+     * Ensure bash scripts have execute permissions
+     * 
+     * @return void
+     * @throws \Exception
+     */
+    protected function ensureHooksHaveExecutePermissions()
+    {
+        $hooksPath = __DIR__ . '/../../../hooks/linux/';
+
+        if (!is_dir($hooksPath)) {
+            $this->warn('Hooks directory not found. Skipping permissions check.');
+            return;
+        }
+
+        $this->line("Checking hooks permissions in: {$hooksPath}");
+
+        $hookScripts = [
+            'pre-create',
+            'post-receive', 
+            'post-terminate',
+            'post-finish'
+        ];
+        
+        $foundScripts = [];
+        
+        foreach ($hookScripts as $hookName) {
+            $scriptPath = $hooksPath . $hookName;
+            if (file_exists($scriptPath)) {
+                $foundScripts[] = $scriptPath;
+            }
+        }
+        
+        if (empty($foundScripts)) {
+            $this->line('No hook scripts found in hooks directory.');
+            return;
+        }
+        
+        foreach ($foundScripts as $script) {
+            if (!$this->hasExecutePermission($script)) {
+                $this->line("Setting execute permission for: " . basename($script));
+                $this->setExecutePermission($script);
+            }
+        }
+    }
+
+    /**
+     * Check if file has execute permission
+     * 
+     * @param string $filePath
+     * @return bool
+     */
+    protected function hasExecutePermission($filePath)
+    {
+        return is_executable($filePath);
+    }
+
+    /**
+     * Set execute permission for a file
+     * 
+     * @param string $filePath
+     * @return void
+     * @throws \Exception
+     */
+    protected function setExecutePermission($filePath)
+    {
+        $command = sprintf('chmod +x "%s"', $filePath);
+        $process = Process::fromShellCommandline($command);
+        $process->run();
+
+        if (!$process->isSuccessful()) {
+            throw new \Exception(
+                sprintf(
+                    'Failed to set execute permission for %s: %s',
+                    basename($filePath),
+                    $process->getErrorOutput()
+                )
+            );
+        }
+
+        if (!$this->hasExecutePermission($filePath)) {
+            $this->warn(sprintf(
+                'Execute permission may not be properly set for %s. Manual intervention may be required.',
+                basename($filePath)
+            ));
+        }
     }
  
     public function sigintShutdown($signal)
